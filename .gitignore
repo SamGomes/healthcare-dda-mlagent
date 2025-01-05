@@ -71,3 +71,13 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+
+python-venv/
+
+healthcare-dda-project/MLAgentsPackages/
+
+healthcare-dda-project/Library/
+
+healthcare-dda-project/Logs/
+
+healthcare-dda-project/Temp/
