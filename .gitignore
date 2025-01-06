@@ -81,3 +81,11 @@ healthcare-dda-project/Library/
 healthcare-dda-project/Logs/
 
 healthcare-dda-project/Temp/
+
+healthcare-dda-project/.idea/
+
+healthcare-dda-project/obj/
+
+python-packages/
+
+unity-packages/

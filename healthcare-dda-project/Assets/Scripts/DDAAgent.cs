@@ -12,7 +12,7 @@ public class DDAAgent : Agent
 
     public GameObject gameUI;
 
-    private List<int> currPolicy;
+    private List<int> currDDAStrat;
     private float pInc;
 
     public override void Initialize()
@@ -20,7 +20,7 @@ public class DDAAgent : Agent
         game = new GameWrapper(gameUI);
         patient = new PatientWrapper();
 
-        currPolicy = new List<int>();
+        currDDAStrat = new List<int>();
     }
 
     public override void CollectObservations(VectorSensor sensor)
@@ -29,10 +29,10 @@ public class DDAAgent : Agent
         sensor.AddObservation(game.CurrLvl);
     }
 
-    public void PrintBestPolicySoFar()
+    public void PrintBestStratSoFar()
     {
         string policyStr = "[";
-        foreach (var action in currPolicy)
+        foreach (var action in currDDAStrat)
         {
             policyStr += action + " -> ";
         }
@@ -45,14 +45,15 @@ public class DDAAgent : Agent
     {
         game.CurrLvl = actionBuffers.DiscreteActions[0] + 1;
         patient.PlayGame(game);
-        currPolicy.Add(game.CurrLvl);
+        currDDAStrat.Add(game.CurrLvl);
+        SetReward(0.0f);
         if (patient.PlayedLvls > (game.NumLvls - 1))
         {
-            float newPInc = (patient.Condition - patient.PrevCondition);
+            float newPInc = (patient.Condition - patient.PrevCondition)/ 7.0f;
             if (newPInc > pInc)
             {
                 pInc = newPInc;
-                PrintBestPolicySoFar();
+                PrintBestStratSoFar();
             }
             SetReward(newPInc);
             EndEpisode();
@@ -61,7 +62,7 @@ public class DDAAgent : Agent
 
     public override void OnEpisodeBegin()
     {
-        currPolicy.Clear();
+        currDDAStrat.Clear();
         patient.PrevCondition = patient.Condition;
         patient.PlayedLvls = 0;
         game = new GameWrapper(gameUI);
