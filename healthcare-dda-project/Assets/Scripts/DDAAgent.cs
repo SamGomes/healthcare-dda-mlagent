@@ -31,13 +31,13 @@ public class DDAAgent : Agent
 
     public void PrintBestStratSoFar()
     {
-        string policyStr = "[";
+        string stratStr = "[";
         foreach (var action in currDDAStrat)
         {
-            policyStr += action + " -> ";
+            stratStr += action + " -> ";
         }
-        policyStr += "]";
-        Debug.Log("Last policy found:"+policyStr);
+        stratStr += "]";
+        Debug.Log("Best episode so far:"+stratStr);
         Debug.Log("pInc:"+pInc);
     }
 
