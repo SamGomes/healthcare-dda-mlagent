@@ -15,7 +15,7 @@ namespace SimEntities
         //sets the improveRate to a random value between 0.4 and 0.7
         private float ImprovRate { get; } = Random.Range(0.5f,1.0f);
 
-        public int[] PrefLvlSeq { get; } = {1,2,3,4,4,4,7};
+        public int[] PrefLvlSeq { get; } = {1,2,3,4,4,4,6};
 
         public void PlayGame(GameWrapper game)
         {
@@ -32,8 +32,8 @@ namespace SimEntities
         public Slider gameUI;
 
         //represents a game level transition
-        public int PrevLvl { get; set; } = 1;
-        private int m_CurrLvl = 1;
+        public int PrevLvl { get; set; } = 0;
+        private int m_CurrLvl = 0;
         public int CurrLvl
         {
             get

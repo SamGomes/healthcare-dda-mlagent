@@ -28,9 +28,11 @@ public class DDAAgent : Agent
         {
             mesh.material.color = new Color(1.0f,1.0f,1.0f);
         }
-        // freqHeatmapMeshes[3*7+3].material.color = new Color(1.0f,0.0f,0.0f);
-        // freqHeatmapMeshes[0*7+0].material.color = new Color(1.0f,0.0f,0.0f);
-        // freqHeatmapMeshes[6*7+6].material.color = new Color(1.0f,0.0f,0.0f);
+        // freqHeatmapMeshes[3*7+3].material.color = new Color(1.0f,0.0f,1.0f);
+        // freqHeatmapMeshes[0*7+0].material.color = new Color(0.0f,1.0f,1.0f);
+        // freqHeatmapMeshes[0*7+6].material.color = new Color(0.0f,0.0f,1.0f);
+        // freqHeatmapMeshes[6*7+0].material.color = new Color(1.0f,0.0f,0.0f);
+        // freqHeatmapMeshes[6*7+6].material.color = new Color(1.0f,1.0f,0.0f);
         currDDAStrat = new List<int>();
     }
 
@@ -57,8 +59,6 @@ public class DDAAgent : Agent
         game.CurrLvl = actionBuffers.DiscreteActions[0] + 1;
         patient.PlayGame(game);
         currDDAStrat.Add(game.CurrLvl);
-        MeshRenderer mesh = freqHeatmapMeshes[(game.NumLvls-1) * (game.PrevLvl-1) + (game.CurrLvl-1)];
-        mesh.material.color += new Color(0.0f,0.0f,0.001f);
         if (patient.PlayedLvls > (game.NumLvls - 1))
         {
             float newPInc = (patient.Condition - patient.PrevCondition)/ 7.0f;
@@ -69,6 +69,16 @@ public class DDAAgent : Agent
             }
             SetReward(newPInc);
             EndEpisode();
+        }
+        if (patient.PlayedLvls > 1)
+        {
+            MeshRenderer mesh = freqHeatmapMeshes[game.NumLvls * (game.PrevLvl - 1) + (game.CurrLvl - 1)];
+            mesh.material.color -= new Color(0.0f, 0.0011f, 0.0011f);
+            
+            foreach(var mesh2 in freqHeatmapMeshes)
+            {
+                mesh2.material.color += new Color(0.0f, 0.000001f, 0.000001f);
+            }
         }
     }
 
