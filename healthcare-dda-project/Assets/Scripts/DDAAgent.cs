@@ -11,7 +11,10 @@ public class DDAAgent : Agent
     private PatientWrapper patient;
 
     public GameObject gameUI;
-
+    
+    public GameObject freqHeatmap;
+    private MeshRenderer[] freqHeatmapMeshes;
+    
     private List<int> currDDAStrat;
     private float pInc;
 
@@ -20,6 +23,14 @@ public class DDAAgent : Agent
         game = new GameWrapper(gameUI);
         patient = new PatientWrapper();
 
+        freqHeatmapMeshes = freqHeatmap.GetComponentsInChildren<MeshRenderer>();
+        foreach(var mesh in freqHeatmapMeshes)
+        {
+            mesh.material.color = new Color(1.0f,1.0f,1.0f);
+        }
+        // freqHeatmapMeshes[3*7+3].material.color = new Color(1.0f,0.0f,0.0f);
+        // freqHeatmapMeshes[0*7+0].material.color = new Color(1.0f,0.0f,0.0f);
+        // freqHeatmapMeshes[6*7+6].material.color = new Color(1.0f,0.0f,0.0f);
         currDDAStrat = new List<int>();
     }
 
@@ -46,6 +57,8 @@ public class DDAAgent : Agent
         game.CurrLvl = actionBuffers.DiscreteActions[0] + 1;
         patient.PlayGame(game);
         currDDAStrat.Add(game.CurrLvl);
+        MeshRenderer mesh = freqHeatmapMeshes[game.NumLvls * game.PrevLvl + game.CurrLvl];
+        mesh.material.color += new Color(0.0f,0.0f,0.0001f);
         SetReward(0.0f);
         if (patient.PlayedLvls > (game.NumLvls - 1))
         {
