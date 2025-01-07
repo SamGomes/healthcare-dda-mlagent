@@ -72,12 +72,12 @@ public class DDAAgent : Agent
         }
         if (patient.PlayedLvls > 1)
         {
-            MeshRenderer mesh = freqHeatmapMeshes[game.NumLvls * (game.PrevLvl - 1) + (game.CurrLvl - 1)];
-            mesh.material.color -= new Color(0.0f, 0.0011f, 0.0011f);
+            MeshRenderer mesh = freqHeatmapMeshes[game.NumLvls * (game.CurrLvl - 1) + (game.PrevLvl - 1)];
+            mesh.material.color -= new Color(0.0f, 0.01f, 0.01f);
             
             foreach(var mesh2 in freqHeatmapMeshes)
             {
-                mesh2.material.color += new Color(0.0f, 0.000001f, 0.000001f);
+                mesh2.material.color += new Color(0.0f, 0.0001f, 0.0001f);
             }
         }
     }
