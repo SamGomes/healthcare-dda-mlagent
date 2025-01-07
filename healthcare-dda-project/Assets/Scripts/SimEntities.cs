@@ -32,8 +32,8 @@ namespace SimEntities
         public Slider gameUI;
 
         //represents a game level transition
-        public int PrevLvl { get; set; } = 0;
-        private int m_CurrLvl = 0;
+        public int PrevLvl { get; set; } = 1;
+        private int m_CurrLvl = 1;
         public int CurrLvl
         {
             get
