@@ -21,7 +21,7 @@ public class DDAAgent : Agent
     public override void Initialize()
     {
         game = new GameWrapper(gameUI);
-        patient = new PatientWrapper();
+        patient = new PatientWrapper(this);
 
         freqHeatmapMeshes = freqHeatmap.GetComponentsInChildren<MeshRenderer>();
         foreach(var mesh in freqHeatmapMeshes)
@@ -65,7 +65,7 @@ public class DDAAgent : Agent
             if (newPInc > pInc)
             {
                 pInc = newPInc;
-                PrintBestStratSoFar();
+                // PrintBestStratSoFar();
             }
             SetReward(newPInc);
             EndEpisode();
@@ -85,6 +85,7 @@ public class DDAAgent : Agent
     public override void OnEpisodeBegin()
     {
         currDDAStrat.Clear();
+        patient.InitRun();
         patient.PrevCondition = patient.Condition;
         patient.PlayedLvls = 0;
         game = new GameWrapper(gameUI);
