@@ -36,10 +36,10 @@ namespace SimEntities
         {
             if (game.CurrLvl > 0) //transition 00 does not make sense, so do nothing to condition
             {
-                int lvlTrIndex = (game.PrevLvl * (game.NumLvls - 1) + game.CurrLvl) - 1; //transition 00 does not make sense
+                int lvlTrIndex = (game.PrevLvl * game.NumLvls + game.CurrLvl) - 1; //transition 00 does not make sense
                 float RSQScore = Convert.ToSingle(m_Measures[lvlTrIndex]["RSQ_mrbluesky_score"]);
                 float normalizedRSQScore = RSQScore / 50.0f;
-                Debug.Log(game.PrevLvl + ";" + game.CurrLvl + "->" + RSQScore);
+                // Debug.Log(game.PrevLvl + ";" + game.CurrLvl + "->" + RSQScore);
                 Condition += normalizedRSQScore; // cast to float did not work for some reason
             }
             PlayedLvls++;
@@ -49,7 +49,7 @@ namespace SimEntities
 
     public class GameWrapper
     {
-        public int NumLvls { get; set; } = 4;
+        public int NumLvls { get; set; } = 3;
         public Slider gameUI;
 
         //represents a game level transition
