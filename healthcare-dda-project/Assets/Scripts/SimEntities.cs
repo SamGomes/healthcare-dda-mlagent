@@ -14,7 +14,10 @@ namespace SimEntities
         public List<Dictionary<string,object>> Measures;
         public Func<int,int,int,float> RewardFunc { get; set; }
 
-        public SimConfig(int numLvls, List<string> lvlNames, string transitionCSVPath, Func<int,int,int,float> rewardFunc)
+        public SimConfig(int numLvls, 
+            List<string> lvlNames, 
+            string transitionCSVPath, 
+            Func<int,int,int,float> rewardFunc)
         {
             NumLvls = numLvls;
             LvlNames = lvlNames;

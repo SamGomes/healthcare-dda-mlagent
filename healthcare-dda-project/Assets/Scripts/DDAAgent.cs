@@ -1,13 +1,10 @@
-using System;
 using System.Collections.Generic;
 using SimEntities;
 using TMPro;
 using UnityEngine;
 using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
-using Unity.MLAgents.Policies;
 using Unity.MLAgents.Sensors;
-using Unity.VisualScripting;
 using UnityEngine.UI;
 
 
@@ -42,7 +39,7 @@ public class DDAAgent : Agent
         freqHeatmapAxisMarksY = GameObject.Find("TrialGrid/yAxis/marks");
         Config = GameObject.Find("AgentManager").GetComponent<AgentManager>().Config;
         initUI = GameObject.Find("Agents").transform.childCount == 1;
-        
+
         game = new GameWrapper(gameUI, Config);
         patient = new PatientWrapper(Config);
 
@@ -101,8 +98,8 @@ public class DDAAgent : Agent
             stratStr += action + " -> ";
         }
         stratStr += "]";
-        Debug.Log("Best episode so far:"+stratStr);
-        Debug.Log("pInc:"+pInc);
+        // Debug.Log("Best episode so far:"+stratStr);
+        // Debug.Log("pInc:"+pInc);
     }
 
     public override void OnActionReceived(ActionBuffers actionBuffers)
