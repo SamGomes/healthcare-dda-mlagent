@@ -541,8 +541,8 @@ MonoBehaviour:
     NumStackedVectorObservations: 1
     m_ActionSpec:
       m_NumContinuousActions: 0
-      BranchSizes: 04000000
-    VectorActionSize: 04000000
+      BranchSizes: 05000000
+    VectorActionSize: 05000000
     VectorActionDescriptions: []
     VectorActionSpaceType: 0
     hasUpgradedBrainParametersWithActionSpec: 1
@@ -577,7 +577,7 @@ MonoBehaviour:
   freqHeatmapSquarePrefab: {fileID: 3895162113253460481, guid: aacfea59c869b11ea9a4f17705a92f9e, type: 3}
   freqHeatmapAxisMarksX: {fileID: 0}
   freqHeatmapAxisMarksY: {fileID: 0}
-  freqHeatmapAxisMarkPrefab: {fileID: 0}
+  freqHeatmapAxisMarkPrefab: {fileID: 1289410310991351449, guid: 00cf192a434b9759897e066503285f8b, type: 3}
 --- !u!114 &6300585426992237623
 MonoBehaviour:
   m_ObjectHideFlags: 0

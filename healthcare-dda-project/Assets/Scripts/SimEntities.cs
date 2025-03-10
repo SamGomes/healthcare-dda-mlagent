@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
-using Google.Protobuf.WellKnownTypes;
 using UnityEngine;
 using UnityEngine.UI;
-using Random = UnityEngine.Random;
 
 namespace SimEntities
 {
@@ -14,9 +12,9 @@ namespace SimEntities
         public List<string> LvlNames { get; }
         
         public List<Dictionary<string,object>> Measures;
-        public Func<float> RewardFunc { get; set; }
+        public Func<int,int,int,float> RewardFunc { get; set; }
 
-        public SimConfig(int numLvls, List<string> lvlNames, string transitionCSVPath, Func<float> rewardFunc)
+        public SimConfig(int numLvls, List<string> lvlNames, string transitionCSVPath, Func<int,int,int,float> rewardFunc)
         {
             NumLvls = numLvls;
             LvlNames = lvlNames;
@@ -42,7 +40,7 @@ namespace SimEntities
         }
         public void PlayGame(GameWrapper game)
         {
-            Condition += m_Config.RewardFunc();
+            Condition += m_Config.RewardFunc(game.PrevLvl,game.CurrLvl,game.NumLvls);
             PlayedLvls++;
         }
     }

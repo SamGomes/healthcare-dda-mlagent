@@ -14,11 +14,11 @@ using UnityEngine.UI;
 
 public class DDAAgent : Agent
 {
-    private SimConfig config;
     private GameWrapper game;
     private PatientWrapper patient;
 
     public bool initUI;
+    public SimConfig Config;
     
     public GameObject gameUI;
     
@@ -33,64 +33,19 @@ public class DDAAgent : Agent
     private float pInc;
     
     private int numCellsPerDim;
-    
-    private float NormalizeFromCSV(int lvlTrIndex, string valueCSVAttr)
-    {
-        float value = Convert.ToSingle(config.Measures[lvlTrIndex][valueCSVAttr]); // cast to float did not work for some reason
-        float min = Convert.ToSingle(config.Measures[lvlTrIndex]["min."+valueCSVAttr]);
-        float max = Convert.ToSingle(config.Measures[lvlTrIndex]["max."+valueCSVAttr]);
-        return (value - min) / (max - min);
-    }
 
-    private float CondIncMBS()
-    {
-        float condInc = 0.0f;
-        if (game.CurrLvl > 0) //transition 00 does not make sense, so do nothing to condition
-        {
-            int lvlTrIndex = (game.PrevLvl * game.NumLvls + game.CurrLvl) - 1; //transition 00 does not make sense
-            
-            condInc += NormalizeFromCSV(lvlTrIndex, "averageTimeRight.second_played_lvl");
-            condInc += NormalizeFromCSV(lvlTrIndex, "averageTimeLeft.second_played_lvl");
-            condInc += 1.0f - NormalizeFromCSV(lvlTrIndex, "stressLevel_delta.second_played_lvl.mrbluesky");
-            condInc += 1.0f - NormalizeFromCSV(lvlTrIndex, "heartRate_delta.second_played_lvl.mrbluesky");
-            condInc += NormalizeFromCSV(lvlTrIndex, "average_displacement1_mrbluesky.second_played_lvl");
-            condInc += NormalizeFromCSV(lvlTrIndex, "average_displacement2_mrbluesky.second_played_lvl");
-            condInc += NormalizeFromCSV(lvlTrIndex, "RSQ_mrbluesky_score_delta");
-            condInc /= 7.0f;
-        }
-        return condInc;
-    }
-    private float CondIncTheKite()
-    {
-        float condInc = 0.0f;
-        if (game.CurrLvl > 0) //transition 00 does not make sense, so do nothing to condition
-        {
-            int lvlTrIndex = (game.PrevLvl * game.NumLvls + game.CurrLvl) - 1; //transition 00 does not make sense
-            condInc += 1.0f - NormalizeFromCSV(lvlTrIndex,"stressLevel_delta.second_played_lvl.thekite");
-            condInc += 1.0f - NormalizeFromCSV(lvlTrIndex,"heartRate_delta.second_played_lvl.thekite");
-            condInc += NormalizeFromCSV(lvlTrIndex,"RSQ_thekite_score_delta");
-            condInc /= 3.0f;
-        }
-        return condInc;
-    }
-        
+    
     public override void Initialize()
     {
-        // for Mr. Blue Sky
-        config = new SimConfig(3,
-             new List<string>() {"A", "B", "C"},
-            "ExpData/processed_data_mrbluesky_bytransition",
-            CondIncMBS);
+        freqHeatmap = GameObject.Find("TrialGrid/gridSquares");
+        freqHeatmapAxisMarksX = GameObject.Find("TrialGrid/xAxis/marks");
+        freqHeatmapAxisMarksY = GameObject.Find("TrialGrid/yAxis/marks");
+        Config = GameObject.Find("AgentManager").GetComponent<AgentManager>().Config;
+        initUI = GameObject.Find("Agents").transform.childCount == 1;
         
-        // for The Kite
-        // config = new SimConfig(4,
-        //     new List<string>() {"A", "B", "C", "D"},
-        //     "ExpData/processed_data_thekite_bytransition",
-        //     CondIncTheKite);
-        
-        game = new GameWrapper(gameUI, config);
-        patient = new PatientWrapper(config);
-        
+        game = new GameWrapper(gameUI, Config);
+        patient = new PatientWrapper(Config);
+
         numCellsPerDim = game.NumLvls + 1;
         if (initUI)
         {
@@ -100,7 +55,7 @@ public class DDAAgent : Agent
             freqHeatmap.GetComponent<GridLayoutGroup>().cellSize= new Vector2(cellWidth*0.9f,cellWidth*0.9f);
 
             
-            List<string> axisLabels = config.LvlNames;
+            List<string> axisLabels = Config.LvlNames;
             axisLabels.Insert(0, "_");
             for (int i = 0; i < (numCellsPerDim * numCellsPerDim); i++)
             {
@@ -186,7 +141,7 @@ public class DDAAgent : Agent
         patient.InitRun();
         // patient.PrevCondition = patient.Condition;
         patient.PlayedLvls = 0;
-        game = new GameWrapper(gameUI, config);
+        game = new GameWrapper(gameUI, Config);
 
         if (!initUI)
         {
