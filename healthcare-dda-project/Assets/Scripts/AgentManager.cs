@@ -10,7 +10,11 @@ public class AgentManager : MonoBehaviour
     public SimConfig Config;
     public GameObject DDAgentPrefab;
     public int numAgents = 0;
-    
+
+    /// <summary>
+    /// Toggles between Mr. Blue Sky (0) or The Kite (1)
+    /// </summary>
+    public int gameId = 0; 
     
     private float NormalizeFromCSV(int lvlTrIndex, string valueCSVAttr)
     {
@@ -57,19 +61,23 @@ public class AgentManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
-        
-        // for Mr. Blue Sky
-        // config = new SimConfig(3,
-        //      new List<string>() {"A", "B", "C"},
-        //     "ExpData/processed_data_mrbluesky_bytransition",
-        //     CondIncMBS);
 
-        
-        // for The Kite
-        Config = new SimConfig(4,
-            new List<string>() {"A", "B", "C", "D"},
-            "ExpData/processed_data_thekite_bytransition",
-            CondIncTheKite);
+        if (gameId == 0)
+        {
+            // for Mr. Blue Sky
+            Config = new SimConfig(3,
+                 new List<string>() {"A", "B", "C"},
+                "ExpData/processed_data_mrbluesky_bytransition",
+                CondIncMBS);
+        }
+        else
+        {
+            // for The Kite
+            Config = new SimConfig(4,
+                new List<string>() { "A", "B", "C", "D" },
+                "ExpData/processed_data_thekite_bytransition",
+                CondIncTheKite);
+        }
 
         BehaviorParameters behaviorParameters = DDAgentPrefab.GetComponent<BehaviorParameters>();
         behaviorParameters.BrainParameters.ActionSpec =

@@ -114,7 +114,7 @@ public class DDAAgent : Agent
 
         patient.PlayGame(game);
         currDDAStrat.Add(game.CurrLvl);
-        if (patient.PlayedLvls > 10)
+        if (patient.PlayedLvls >= 10)
         {
             //update plot
             for (int i=1; i<currDDAStrat.Count; i++)
@@ -124,7 +124,7 @@ public class DDAAgent : Agent
             }
             foreach (var mesh2 in freqHeatmapCells)
             {
-                mesh2.color += new Color(0.0f, 0.001f, 0.001f);
+                mesh2.color += new Color(0.0f, 0.001f, 0.001f,0.0f);
             }
             
             // float newPInc = (patient.Condition - patient.PrevCondition)/ patient.PlayedLvls;

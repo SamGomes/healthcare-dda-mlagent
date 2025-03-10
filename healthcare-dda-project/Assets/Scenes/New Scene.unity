@@ -281,6 +281,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DDAgentPrefab: {fileID: 8089703006054851982, guid: cf5e859ff7bbb5f39821be7420b5ab78, type: 3}
   numAgents: 4
+  gameId: 0
 --- !u!1 &267729333
 GameObject:
   m_ObjectHideFlags: 0
@@ -750,7 +751,7 @@ Transform:
   m_GameObject: {fileID: 1450984850}
   serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 10.9, z: 0}
+  m_LocalPosition: {x: 0, y: 12, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -886,7 +887,7 @@ TextMesh:
   m_Anchor: 0
   m_Alignment: 0
   m_TabSize: 4
-  m_FontSize: 0
+  m_FontSize: 50
   m_FontStyle: 0
   m_RichText: 1
   m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
@@ -947,8 +948,8 @@ Transform:
   m_GameObject: {fileID: 1542509806}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.62, y: -4.98, z: 0.01}
-  m_LocalScale: {x: 0.31057, y: 0.31057, z: 0.31057}
+  m_LocalPosition: {x: -1.7346, y: -5.35, z: 0.01}
+  m_LocalScale: {x: 0.16151725, y: 0.16151725, z: 0.16151725}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 663166305}
@@ -986,7 +987,7 @@ TextMesh:
   m_Anchor: 0
   m_Alignment: 0
   m_TabSize: 4
-  m_FontSize: 0
+  m_FontSize: 50
   m_FontStyle: 0
   m_RichText: 1
   m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
@@ -1047,8 +1048,8 @@ Transform:
   m_GameObject: {fileID: 1828750804}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.72, y: -3.19, z: 0.008974373}
-  m_LocalScale: {x: 0.31057, y: 0.31057, z: 0.31057}
+  m_LocalPosition: {x: -1.9231, y: -2.75, z: 0.0089743}
+  m_LocalScale: {x: 0.17188603, y: 0.17188603, z: 0.17188603}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 47869945}
