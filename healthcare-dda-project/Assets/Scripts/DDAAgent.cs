@@ -113,7 +113,7 @@ public class DDAAgent : Agent
         currDDAStrat.Add(game.CurrLvl);
         if (patient.PlayedLvls >= 10)
         {
-            //update plot
+            //update heatmap
             for (int i=1; i<currDDAStrat.Count; i++)
             {
                 Image mesh = freqHeatmapCells[numCellsPerDim * currDDAStrat[i] + currDDAStrat[i-1]];
