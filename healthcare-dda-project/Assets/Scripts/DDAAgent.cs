@@ -52,7 +52,7 @@ public class DDAAgent : Agent
             freqHeatmap.GetComponent<GridLayoutGroup>().cellSize= new Vector2(cellWidth*0.9f,cellWidth*0.9f);
 
             
-            List<string> axisLabels = Config.LvlNames;
+            List<string> axisLabels = Config.NameGameLvls;
             axisLabels.Insert(0, "_");
             for (int i = 0; i < (numCellsPerDim * numCellsPerDim); i++)
             {
@@ -89,19 +89,7 @@ public class DDAAgent : Agent
         sensor.AddObservation(game.PrevLvl);
         sensor.AddObservation(game.CurrLvl);
     }
-
-    public void PrintBestStratSoFar()
-    {
-        string stratStr = "[";
-        foreach (var action in currDDAStrat)
-        {
-            stratStr += action + " -> ";
-        }
-        stratStr += "]";
-        // Debug.Log("Best episode so far:"+stratStr);
-        // Debug.Log("pInc:"+pInc);
-    }
-
+    
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
         if (patient.PlayedLvls > 0) //force start at state 0
@@ -111,7 +99,7 @@ public class DDAAgent : Agent
 
         patient.PlayGame(game);
         currDDAStrat.Add(game.CurrLvl);
-        if (patient.PlayedLvls >= 10)
+        if (patient.PlayedLvls >= Config.NumEpisodeLvls)
         {
             //update heatmap
             for (int i=1; i<currDDAStrat.Count; i++)

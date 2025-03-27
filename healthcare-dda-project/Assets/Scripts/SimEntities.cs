@@ -2,25 +2,29 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 namespace SimEntities
 {
 
     public class SimConfig
     {
-        public int NumLvls { get; set; }
-        public List<string> LvlNames { get; }
+        public int NumEpisodeLvls { get; set; }
+        public int NumGameLvls { get; set; }
+        public List<string> NameGameLvls { get; }
         
         public List<Dictionary<string,object>> Measures;
-        public Func<int,int,int,float> RewardFunc { get; set; }
+        public Func<int,List<(int,int)>,int,int,int,float> RewardFunc { get; set; }
 
-        public SimConfig(int numLvls, 
-            List<string> lvlNames, 
+        public SimConfig(int numEpisodeLvls, 
+            int numGameLvls, 
+            List<string> nameGameLvls, 
             string transitionCSVPath, 
-            Func<int,int,int,float> rewardFunc)
+            Func<int,List<(int,int)>,int,int,int,float> rewardFunc)
         {
-            NumLvls = numLvls;
-            LvlNames = lvlNames;
+            NumEpisodeLvls = numEpisodeLvls;
+            NumGameLvls = numGameLvls;
+            NameGameLvls = nameGameLvls;
             RewardFunc = rewardFunc;
             Measures = CSVReader.Read (transitionCSVPath);
         }
@@ -32,10 +36,20 @@ namespace SimEntities
         public int PlayedLvls { get; set; }
         public float Condition { get; private set; }
 
+        public List<(int,int)> Flares;
         
         public PatientWrapper(SimConfig config)
         {
             m_Config = config;
+            Flares = new List<(int, int)>();
+
+            int numFlares = Random.Range(0, 3);
+            for (int i = 0; i < numFlares; i++)
+            {
+                int flareMax = Random.Range(0, m_Config.NumEpisodeLvls + 1);
+                int flareRange = 15;
+                Flares.Add((flareMax,15));
+            }
         }
         public void InitRun()
         {
@@ -43,8 +57,8 @@ namespace SimEntities
         }
         public void PlayGame(GameWrapper game)
         {
-            Condition += m_Config.RewardFunc(game.PrevLvl,game.CurrLvl,game.NumLvls);
             PlayedLvls++;
+            Condition += m_Config.RewardFunc(PlayedLvls,Flares,game.PrevLvl,game.CurrLvl,game.NumLvls);
         }
     }
 
@@ -72,7 +86,7 @@ namespace SimEntities
 
         public GameWrapper(GameObject gameUI, SimConfig config)
         {
-            NumLvls = config.NumLvls;
+            NumLvls = config.NumGameLvls;
             this.gameUI = gameUI.GetComponent<Slider>();
         }
 
