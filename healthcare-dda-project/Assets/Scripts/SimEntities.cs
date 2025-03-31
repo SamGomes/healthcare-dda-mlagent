@@ -16,17 +16,22 @@ namespace SimEntities
         public List<Dictionary<string,object>> Measures;
         public Func<int,List<(int,int)>,int,int,int,float> RewardFunc { get; set; }
 
+        public int FlareDuration;
+        
         public SimConfig(int numEpisodeLvls, 
             int numGameLvls, 
             List<string> nameGameLvls, 
             string transitionCSVPath, 
-            Func<int,List<(int,int)>,int,int,int,float> rewardFunc)
+            Func<int,List<(int,int)>,int,int,int,float> rewardFunc,
+            int flareDuration)
         {
             NumEpisodeLvls = numEpisodeLvls;
             NumGameLvls = numGameLvls;
             NameGameLvls = nameGameLvls;
             RewardFunc = rewardFunc;
             Measures = CSVReader.Read (transitionCSVPath);
+            
+            FlareDuration = flareDuration;
         }
     }
     public class PatientWrapper
@@ -41,24 +46,25 @@ namespace SimEntities
         public PatientWrapper(SimConfig config)
         {
             m_Config = config;
+        }
+        public void InitRun()
+        {
             Flares = new List<(int, int)>();
 
             int numFlares = Random.Range(0, 3);
             for (int i = 0; i < numFlares; i++)
             {
-                int flareMax = Random.Range(0, m_Config.NumEpisodeLvls + 1);
-                int flareRange = 15;
-                Flares.Add((flareMax,15));
+                int flareVar = m_Config.FlareDuration;
+                int flareMax = Random.Range(-flareVar + 1, m_Config.NumEpisodeLvls + flareVar);
+                Flares.Add((flareMax,flareVar));
             }
-        }
-        public void InitRun()
-        {
+            
             Condition = 0.0f;
         }
         public void PlayGame(GameWrapper game)
         {
-            PlayedLvls++;
             Condition += m_Config.RewardFunc(PlayedLvls,Flares,game.PrevLvl,game.CurrLvl,game.NumLvls);
+            PlayedLvls++;
         }
     }
 

@@ -2,22 +2,22 @@
     "HealthcareDDA": {
         "checkpoints": [
             {
-                "steps": 149280,
-                "file_path": "results/firstHealthcareDDARun/HealthcareDDA/HealthcareDDA-149280.onnx",
-                "reward": 0.21027866750955582,
-                "creation_time": 1743117826.8837793,
+                "steps": 54600,
+                "file_path": "results/firstHealthcareDDARun/HealthcareDDA/HealthcareDDA-54600.onnx",
+                "reward": null,
+                "creation_time": 1743442752.1068838,
                 "auxillary_file_paths": [
-                    "results/firstHealthcareDDARun/HealthcareDDA/HealthcareDDA-149280.pt"
+                    "results/firstHealthcareDDARun/HealthcareDDA/HealthcareDDA-54600.pt"
                 ]
             }
         ],
         "final_checkpoint": {
-            "steps": 149280,
+            "steps": 54600,
             "file_path": "results/firstHealthcareDDARun/HealthcareDDA.onnx",
-            "reward": 0.21027866750955582,
-            "creation_time": 1743117826.8837793,
+            "reward": null,
+            "creation_time": 1743442752.1068838,
             "auxillary_file_paths": [
-                "results/firstHealthcareDDARun/HealthcareDDA/HealthcareDDA-149280.pt"
+                "results/firstHealthcareDDARun/HealthcareDDA/HealthcareDDA-54600.pt"
             ]
         }
     },

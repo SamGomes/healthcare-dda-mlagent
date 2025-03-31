@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using SimEntities;
 using TMPro;
@@ -89,6 +90,20 @@ public class DDAAgent : Agent
         sensor.AddObservation(game.PrevLvl);
         sensor.AddObservation(game.CurrLvl);
     }
+
+    private void UpdateFreqHeatmapCells()
+    {
+        //update heatmap
+        for (int i=1; i<currDDAStrat.Count; i++)
+        {
+            Image mesh = freqHeatmapCells[numCellsPerDim * currDDAStrat[i] + currDDAStrat[i-1]];
+            mesh.color -= new Color(0.0f, 0.003f, 0.003f,0.0f);
+        }
+        foreach (var mesh2 in freqHeatmapCells)
+        {
+            mesh2.color += new Color(0.0f, 0.001f, 0.001f,0.0f);
+        }
+    }
     
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
@@ -101,17 +116,7 @@ public class DDAAgent : Agent
         currDDAStrat.Add(game.CurrLvl);
         if (patient.PlayedLvls >= Config.NumEpisodeLvls)
         {
-            //update heatmap
-            for (int i=1; i<currDDAStrat.Count; i++)
-            {
-                Image mesh = freqHeatmapCells[numCellsPerDim * currDDAStrat[i] + currDDAStrat[i-1]];
-                mesh.color -= new Color(0.0f, 0.003f, 0.003f,0.0f);
-            }
-            foreach (var mesh2 in freqHeatmapCells)
-            {
-                mesh2.color += new Color(0.0f, 0.001f, 0.001f,0.0f);
-            }
-            
+            UpdateFreqHeatmapCells();
             // float newPInc = (patient.Condition - patient.PrevCondition)/ patient.PlayedLvls;
             float newPInc = patient.Condition/ patient.PlayedLvls;
             SetReward(newPInc);
