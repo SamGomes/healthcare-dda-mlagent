@@ -144,9 +144,10 @@ public class DDAAgent : Agent
         }
     }
 
-    // public override void Heuristic(in ActionBuffers actionsOut)
-    // {
-    //     var discreteActions = actionsOut.DiscreteActions;
-    //     discreteActions[0] = Random.Range(0,5);
-    // }
+    public override void Heuristic(in ActionBuffers actionsOut)
+    {
+        game.CurrLvl = actionsOut.DiscreteActions[0];
+        patient.PlayGame(game);
+        currDDAStrat.Add(game.CurrLvl);
+    }
 }
