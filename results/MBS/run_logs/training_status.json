@@ -4,8 +4,8 @@
             {
                 "steps": 30020,
                 "file_path": "results/firstHealthcareDDARun/HealthcareDDA/HealthcareDDA-30020.onnx",
-                "reward": 0.5286904262999693,
-                "creation_time": 1743623341.6790016,
+                "reward": 0.5330813775459925,
+                "creation_time": 1743620313.3870509,
                 "auxillary_file_paths": [
                     "results/firstHealthcareDDARun/HealthcareDDA/HealthcareDDA-30020.pt"
                 ]
@@ -14,8 +14,8 @@
         "final_checkpoint": {
             "steps": 30020,
             "file_path": "results/firstHealthcareDDARun/HealthcareDDA.onnx",
-            "reward": 0.5286904262999693,
-            "creation_time": 1743623341.6790016,
+            "reward": 0.5330813775459925,
+            "creation_time": 1743620313.3870509,
             "auxillary_file_paths": [
                 "results/firstHealthcareDDARun/HealthcareDDA/HealthcareDDA-30020.pt"
             ]

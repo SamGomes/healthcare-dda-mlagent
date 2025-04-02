@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
@@ -16,22 +17,24 @@ namespace SimEntities
         public List<Dictionary<string,object>> Measures;
         public Func<int,List<(int,int)>,int,int,int,float> RewardFunc { get; set; }
 
-        public int FlareDuration;
+        public int MeanFlareDuration;
+        
+        
         
         public SimConfig(int numEpisodeLvls, 
             int numGameLvls, 
             List<string> nameGameLvls, 
             string transitionCSVPath, 
             Func<int,List<(int,int)>,int,int,int,float> rewardFunc,
-            int flareDuration)
+            int meanFlareDuration)
         {
             NumEpisodeLvls = numEpisodeLvls;
             NumGameLvls = numGameLvls;
             NameGameLvls = nameGameLvls;
             RewardFunc = rewardFunc;
-            Measures = CSVReader.Read (transitionCSVPath);
+            Measures = CSVReader.Read(transitionCSVPath);
             
-            FlareDuration = flareDuration;
+            MeanFlareDuration = meanFlareDuration;
         }
     }
     public class PatientWrapper
@@ -43,6 +46,30 @@ namespace SimEntities
 
         public List<(int,int)> Flares;
         
+        
+        
+        public static float RandomGaussian(float minValue = 0.0f, float maxValue = 1.0f)
+        {
+            float u, v, S;
+
+            do
+            {
+                u = 2.0f * Random.value - 1.0f;
+                v = 2.0f * Random.value - 1.0f;
+                S = u * u + v * v;
+            }
+            while (S >= 1.0f);
+
+            // Standard Normal Distribution
+            float std = u * Mathf.Sqrt(-2.0f * Mathf.Log(S) / S);
+
+            // Normal Distribution centered between the min and max value
+            // and clamped following the "three-sigma rule"
+            float mean = (minValue + maxValue) / 2.0f;
+            float sigma = (maxValue - mean) / 3.0f;
+            return Mathf.Clamp(std * sigma + mean, minValue, maxValue);
+        }
+        
         public PatientWrapper(SimConfig config)
         {
             m_Config = config;
@@ -52,11 +79,23 @@ namespace SimEntities
             Flares = new List<(int, int)>();
 
             int numFlares = Random.Range(0, 3);
+
+            // List<int> xtest = new List<int>(200);
+            // for (int i = 0; i < 200; i++)
+            //     xtest.Add(0);
+            // for (int i = 0; i < 10000; i++)
+            // {
+            //     int flareVar = (int) RandomGaussian(0,2*m_Config.MeanFlareDuration);
+            //     xtest[flareVar]++;
+            // }
+            // Debug.Log(xtest);
+            
             for (int i = 0; i < numFlares; i++)
             {
-                int flareVar = m_Config.FlareDuration;
-                int flareMax = Random.Range(-flareVar + 1, m_Config.NumEpisodeLvls + flareVar);
-                Flares.Add((flareMax,flareVar));
+                float flareVar = RandomGaussian(0,2*m_Config.MeanFlareDuration);
+                int flareStd = (int) (flareVar / 2.0f);
+                int flareMax = Random.Range(-flareStd + 1, m_Config.NumEpisodeLvls + flareStd);
+                Flares.Add((flareMax,2*flareStd));
             }
             
             Condition = 0.0f;

@@ -84,18 +84,34 @@ public class AgentManager : MonoBehaviour
         float condInc = 0.0f;
         if (currLvl > 0) //transition 00 does not make sense, so do nothing to condition
         {
+            
+            // List<float> xtest = new List<float>(10);
+            // for (int i = 0; i < 10; i++) xtest.Add(0);
+            // for (int i = 0; i < 10; i++)
+            // {
+            //     float maxWFlarel = 0;
+            //     foreach (var flare in flares)
+            //     {
+            //         float currWFlare = GetWFlare(flare.Item1, flare.Item2, i);
+            //         maxWFlarel = (maxWFlarel < currWFlare) ? currWFlare : maxWFlarel;
+            //     }
+            //     
+            //     xtest[i] = maxWFlarel;
+            // }
+            // Debug.Log(xtest);
+            
             float maxWFlare = 0;
             foreach (var flare in flares)
             {
                 float currWFlare = GetWFlare(flare.Item1, flare.Item2, playedLvls);
                 maxWFlare = (maxWFlare < currWFlare) ? currWFlare : maxWFlare;
             }
-            
+
             //weights given for each metric when calculating Condition Increase
             float[] metricsW = {0.333f,0.222f,0.111f,0.222f,0.111f}; 
             
             //importance of each metric when changing Condition Increase on flare
-            float[] flareMetricsW = {0.3f,0.3f,1.0f,0.5f,1.0f};
+            float[] flareMetricsW = {0.5f,0.5f,2.0f,1.0f,2.0f};
 
             int lvlTrIndex = (prevLvl * numLvls + currLvl) - 1; //transition 00 does not make sense
 
@@ -103,8 +119,8 @@ public class AgentManager : MonoBehaviour
                         NormalizeFromCSV(lvlTrIndex, "average_displacement2_mrbluesky.second_played_lvl")) / 2.0f;
             condInc += CondIncPerMetric(prd, metricsW[0], flareMetricsW[0], maxWFlare);
 
-            float prt =  (NormalizeFromCSV(lvlTrIndex, "averageTimeRight.second_played_lvl") +
-                         NormalizeFromCSV(lvlTrIndex, "averageTimeLeft.second_played_lvl")) / 2.0f;
+            float prt = 1.0f - (NormalizeFromCSV(lvlTrIndex, "averageTimeRight.second_played_lvl") +
+                                 NormalizeFromCSV(lvlTrIndex, "averageTimeLeft.second_played_lvl")) / 2.0f;
             condInc += CondIncPerMetric(prt, metricsW[1], flareMetricsW[1], maxWFlare);
             
             float sl = 1.0f - NormalizeFromCSV(lvlTrIndex, "stressLevel_delta.second_played_lvl.mrbluesky");
@@ -131,10 +147,10 @@ public class AgentManager : MonoBehaviour
             }
             
             //weights given for each metric when calculating Condition Increase
-            float[] metricsW = {0.111f,0.222f,0.111f}; 
+            float[] metricsW = {0.4f,0.2f,0.4f}; 
             
             //importance of each metric when changing Condition Increase on flare
-            float[] flareMetricsW = {1.0f,0.5f,1.0f};
+            float[] flareMetricsW = {2.0f,1.0f,2.0f};
 
             int lvlTrIndex = (prevLvl * numLvls + currLvl) - 1; //transition 00 does not make sense
             
@@ -164,7 +180,7 @@ public class AgentManager : MonoBehaviour
                  new List<string>() {"A", "B", "C"},
                 "ExpData/processed_data_mrbluesky_bytransition",
                 CondIncMBS,
-                60);
+                84);
         }
         else //if (gameId == GameId.TheKite)
         {
@@ -174,7 +190,7 @@ public class AgentManager : MonoBehaviour
                 new List<string>() { "A", "B", "C", "D" },
                 "ExpData/processed_data_thekite_bytransition",
                 CondIncTheKite,
-                60);
+                84);
         }
 
         BehaviorParameters behaviorParameters = DDAgentPrefab.GetComponent<BehaviorParameters>();

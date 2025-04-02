@@ -93,16 +93,22 @@ public class DDAAgent : Agent
 
     private void UpdateFreqHeatmapCells()
     {
+        string currDDAStratText = "[";
         //update heatmap
         for (int i=1; i<currDDAStrat.Count; i++)
         {
             Image mesh = freqHeatmapCells[numCellsPerDim * currDDAStrat[i] + currDDAStrat[i-1]];
             mesh.color -= new Color(0.0f, 0.003f, 0.003f,0.0f);
+
+            currDDAStratText += (i<currDDAStrat.Count - 1)? currDDAStrat[i]+"->": currDDAStrat[i];
         }
+        currDDAStratText += ']';
+
         foreach (var mesh2 in freqHeatmapCells)
         {
             mesh2.color += new Color(0.0f, 0.001f, 0.001f,0.0f);
         }
+        Debug.Log(currDDAStratText);
     }
     
     public override void OnActionReceived(ActionBuffers actionBuffers)
