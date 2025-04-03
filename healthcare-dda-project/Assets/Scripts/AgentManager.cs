@@ -4,7 +4,7 @@ using SimEntities;
 using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Policies;
 using UnityEngine;
-using UnityEngine.InputSystem.Controls;
+using Random = UnityEngine.Random;
 
 public class AgentManager : MonoBehaviour
 {
@@ -15,11 +15,14 @@ public class AgentManager : MonoBehaviour
     /// <summary>
     /// Toggles between Mr. Blue Sky (0) or The Kite (1)
     /// </summary>
-    public enum GameId{
-        MrBlueSky = 0,
-        TheKite = 1
+    public enum GameCond{
+        MrBlueSky_BaseCalcs = 0,
+        TheKite_BaseCalcs = 1,
+        MrBlueSky_WithFlares = 2,
+        TheKite_WithFlares = 3,
+        test = 4
     }
-    public GameId gameId; 
+    public GameCond gameCond; 
     
     private float NormalizeFromCSV(int lvlTrIndex, string valueCSVAttr)
     {
@@ -40,42 +43,102 @@ public class AgentManager : MonoBehaviour
         tf /= var;
         return -0.5f * (float) Math.Cos(2 * Mathf.PI * tf) + 0.5f;
     }
-
-    private float CondIncMBS_basic(int playedLvls, List<(int,int)> flares, int prevLvl, int currLvl, int numLvls)
+    
+    //for base calculation
+    private float CondIncPerMetric(float metric,float metricW)
+    {
+        return metric * metricW;
+    }
+    
+    //with flares
+    private float CondIncPerMetric(float metric,float metricW,float flareMetricsW,float maxWFlare)
+    {
+        float baseInc = CondIncPerMetric(metric, metricW);
+        return baseInc - baseInc * (1 - flareMetricsW) * maxWFlare;
+    }
+    
+    private float CondIncMBS_baseCalcsOnly(int playedLvls, List<(int,int)> flares, int prevLvl, int currLvl, int numLvls)
     {
         float condInc = 0.0f;
         if (currLvl > 0) //transition 00 does not make sense, so do nothing to condition
         {
+            
+            //weights given for each metric when calculating Condition Increase
+            float[] metricsW = {0.333f,0.222f,0.111f,0.222f,0.111f}; 
+
+            int lvlTrIndex = (prevLvl * numLvls + currLvl) - 1; //transition 00 does not make sense
+
+            float prd =  (NormalizeFromCSV(lvlTrIndex, "average_displacement1_mrbluesky.second_played_lvl") +
+                        NormalizeFromCSV(lvlTrIndex, "average_displacement2_mrbluesky.second_played_lvl")) / 2.0f;
+            condInc += CondIncPerMetric(prd, metricsW[0]);
+
+            float prt = 1.0f - (NormalizeFromCSV(lvlTrIndex, "averageTimeRight.second_played_lvl") +
+                                 NormalizeFromCSV(lvlTrIndex, "averageTimeLeft.second_played_lvl")) / 2.0f;
+            condInc += CondIncPerMetric(prt, metricsW[1]);
+            
+            float sl = 1.0f - NormalizeFromCSV(lvlTrIndex, "stressLevel_delta.second_played_lvl.mrbluesky");
+            condInc += CondIncPerMetric(sl, metricsW[2]);
+
+            float hr = 1.0f - NormalizeFromCSV(lvlTrIndex, "heartRate_delta.second_played_lvl.mrbluesky");
+            condInc += CondIncPerMetric(hr, metricsW[3]);
+            
+            float rsq = NormalizeFromCSV(lvlTrIndex, "RSQ_mrbluesky_score_delta");
+            condInc += CondIncPerMetric(rsq, metricsW[4]);
+        }
+        return condInc;
+    }
+    private float CondIncTheKite_baseCalcsOnly(int playedLvls, List<(int,int)> flares, int prevLvl, int currLvl, int numLvls)
+    {
+        float condInc = 0.0f;
+        if (currLvl > 0) //transition 00 does not make sense, so do nothing to condition
+        {
+            //weights given for each metric when calculating Condition Increase
+            float[] metricsW = {0.4f,0.2f,0.4f}; 
+
             int lvlTrIndex = (prevLvl * numLvls + currLvl) - 1; //transition 00 does not make sense
             
-            condInc += NormalizeFromCSV(lvlTrIndex, "averageTimeRight.second_played_lvl");
-            condInc += NormalizeFromCSV(lvlTrIndex, "averageTimeLeft.second_played_lvl");
-            condInc += 1.0f - NormalizeFromCSV(lvlTrIndex, "stressLevel_delta.second_played_lvl.mrbluesky");
-            condInc += 1.0f - NormalizeFromCSV(lvlTrIndex, "heartRate_delta.second_played_lvl.mrbluesky");
-            condInc += NormalizeFromCSV(lvlTrIndex, "average_displacement1_mrbluesky.second_played_lvl");
-            condInc += NormalizeFromCSV(lvlTrIndex, "average_displacement2_mrbluesky.second_played_lvl");
-            condInc += NormalizeFromCSV(lvlTrIndex, "RSQ_mrbluesky_score_delta");
-            condInc /= 7.0f;
-        }
-        return condInc;
-    }
-    private float CondIncTheKite_basic(int playedLvls, List<(int,int)> flares, int prevLvl, int currLvl, int numLvls)
-    {
-        float condInc = 0.0f;
-        if (currLvl > 0) //transition 00 does not make sense, so do nothing to condition
-        {
-            int lvlTrIndex = (prevLvl * numLvls + currLvl) - 1; //transition 00 does not make sense
-            condInc += 1.0f - NormalizeFromCSV(lvlTrIndex,"stressLevel_delta.second_played_lvl.thekite");
-            condInc += 1.0f - NormalizeFromCSV(lvlTrIndex,"heartRate_delta.second_played_lvl.thekite");
-            condInc += NormalizeFromCSV(lvlTrIndex,"RSQ_thekite_score_delta");
-            condInc /= 3.0f;
+            float sl = 1.0f - NormalizeFromCSV(lvlTrIndex, "stressLevel_delta.second_played_lvl.thekite");
+            condInc += CondIncPerMetric(sl, metricsW[0]);
+
+            float hr = 1.0f - NormalizeFromCSV(lvlTrIndex, "heartRate_delta.second_played_lvl.thekite");
+            condInc += CondIncPerMetric(hr, metricsW[1]);
+            
+            float rsq = NormalizeFromCSV(lvlTrIndex, "RSQ_thekite_score_delta");
+            condInc += CondIncPerMetric(rsq, metricsW[2]);
         }
         return condInc;
     }
 
-    private float CondIncPerMetric(float metric,float metricsW,float flareMetricsW,float maxWFlare)
+    
+    private float RTest(int playedLvls, List<(int,int)> flares, int prevLvl, int currLvl, int numLvls)
     {
-        return (metric * metricsW) - metric * metricsW * (1 - flareMetricsW) * maxWFlare;
+        float condInc = 0.0f;
+        if (currLvl > 0) //transition 00 does not make sense, so do nothing to condition
+        {
+            
+            //weights given for each metric when calculating Condition Increase
+            float[] metricsW = {0.333f,0.222f,0.111f,0.222f,0.111f}; 
+
+            int lvlTrIndex = (prevLvl * numLvls + currLvl) - 1; //transition 00 does not make sense
+
+            float prd =  (NormalizeFromCSV(lvlTrIndex, "average_displacement1_mrbluesky.second_played_lvl") +
+                          NormalizeFromCSV(lvlTrIndex, "average_displacement2_mrbluesky.second_played_lvl")) / 2.0f;
+            condInc += CondIncPerMetric(prd, metricsW[0]);
+
+            float prt = 1.0f - (NormalizeFromCSV(lvlTrIndex, "averageTimeRight.second_played_lvl") +
+                                NormalizeFromCSV(lvlTrIndex, "averageTimeLeft.second_played_lvl")) / 2.0f;
+            condInc += CondIncPerMetric(prt, metricsW[1]);
+            
+            float sl = 1.0f - NormalizeFromCSV(lvlTrIndex, "stressLevel_delta.second_played_lvl.mrbluesky");
+            condInc += CondIncPerMetric(sl, metricsW[2]);
+
+            float hr = 1.0f - NormalizeFromCSV(lvlTrIndex, "heartRate_delta.second_played_lvl.mrbluesky");
+            condInc += CondIncPerMetric(hr, metricsW[3]);
+            
+            float rsq = NormalizeFromCSV(lvlTrIndex, "RSQ_mrbluesky_score_delta");
+            condInc += CondIncPerMetric(rsq, metricsW[4]);
+        }
+        return condInc;
     }
     
     // This is the Condition Increase function (reward function) for a patient when playing Mr. Blue Sky 
@@ -100,7 +163,7 @@ public class AgentManager : MonoBehaviour
             // }
             // Debug.Log(xtest);
             
-            float maxWFlare = 0;
+            float maxWFlare = 0.0f;
             foreach (var flare in flares)
             {
                 float currWFlare = GetWFlare(flare.Item1, flare.Item2, playedLvls);
@@ -172,25 +235,51 @@ public class AgentManager : MonoBehaviour
     void Awake()
     {
 
-        if (gameId == GameId.MrBlueSky)
+        switch (gameCond)
         {
-            // for Mr. Blue Sky
-            Config = new SimConfig(5,
-                3,
-                 new List<string>() {"A", "B", "C"},
-                "ExpData/processed_data_mrbluesky_bytransition",
-                CondIncMBS,
-                84);
-        }
-        else //if (gameId == GameId.TheKite)
-        {
-            // for The Kite
-            Config = new SimConfig(5,
-                4,
-                new List<string>() { "A", "B", "C", "D" },
-                "ExpData/processed_data_thekite_bytransition",
-                CondIncTheKite,
-                84);
+            case GameCond.MrBlueSky_BaseCalcs:
+                Config = new SimConfig(4,
+                    3,
+                    new List<string>() { "A", "B", "C" },
+                    "ExpData/processed_data_mrbluesky_bytransition",
+                    CondIncMBS_baseCalcsOnly,
+                    0);
+                break;
+                
+            case GameCond.MrBlueSky_WithFlares:
+                Config = new SimConfig(4,
+                    3,
+                    new List<string>() { "A", "B", "C" },
+                    "ExpData/processed_data_mrbluesky_bytransition",
+                    CondIncMBS,
+                    84);
+                break;
+            case GameCond.TheKite_BaseCalcs:
+                Config = new SimConfig(4,
+                    4,
+                    new List<string>() { "A", "B", "C", "D" },
+                    "ExpData/processed_data_thekite_bytransition",
+                    CondIncTheKite_baseCalcsOnly,
+                    0);
+                break;
+                
+            case GameCond.TheKite_WithFlares:
+                Config = new SimConfig(4,
+                    4,
+                    new List<string>() { "A", "B", "C", "D" },
+                    "ExpData/processed_data_thekite_bytransition",
+                    CondIncTheKite,
+                    84);
+                break;
+            
+            case GameCond.test:
+                Config = new SimConfig(4,
+                    4,
+                    new List<string>() { "A", "B", "C", "D" },
+                    "ExpData/processed_data_thekite_bytransition",
+                    RTest,
+                    0);
+                break;
         }
 
         BehaviorParameters behaviorParameters = DDAgentPrefab.GetComponent<BehaviorParameters>();

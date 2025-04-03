@@ -110,7 +110,6 @@ namespace SimEntities
     public class GameWrapper
     {
         public int NumLvls { get; }
-        public Slider gameUI;
 
         //represents a game level transition
         public int PrevLvl { get; set; } = 0;
@@ -125,14 +124,12 @@ namespace SimEntities
             {
                 PrevLvl = m_CurrLvl;
                 m_CurrLvl = value;
-                gameUI.value = value;
             }
         }
 
         public GameWrapper(GameObject gameUI, SimConfig config)
         {
             NumLvls = config.NumGameLvls;
-            this.gameUI = gameUI.GetComponent<Slider>();
         }
 
     }

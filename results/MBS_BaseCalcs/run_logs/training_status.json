@@ -1,0 +1,29 @@
+{
+    "HealthcareDDA": {
+        "checkpoints": [
+            {
+                "steps": 30020,
+                "file_path": "results/MBS_BaseCalcs/HealthcareDDA/HealthcareDDA-30020.onnx",
+                "reward": 0.5568097233772278,
+                "creation_time": 1743703331.3395956,
+                "auxillary_file_paths": [
+                    "results/MBS_BaseCalcs/HealthcareDDA/HealthcareDDA-30020.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 30020,
+            "file_path": "results/MBS_BaseCalcs/HealthcareDDA.onnx",
+            "reward": 0.5568097233772278,
+            "creation_time": 1743703331.3395956,
+            "auxillary_file_paths": [
+                "results/MBS_BaseCalcs/HealthcareDDA/HealthcareDDA-30020.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.1.0",
+        "torch_version": "2.2.2+cu121"
+    }
+}

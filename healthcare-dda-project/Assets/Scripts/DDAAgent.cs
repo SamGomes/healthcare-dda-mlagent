@@ -120,7 +120,7 @@ public class DDAAgent : Agent
 
         patient.PlayGame(game);
         currDDAStrat.Add(game.CurrLvl);
-        if (patient.PlayedLvls >= Config.NumEpisodeLvls)
+        if (patient.PlayedLvls >= Config.NumEpisodeLvls + 1)
         {
             UpdateFreqHeatmapCells();
             // float newPInc = (patient.Condition - patient.PrevCondition)/ patient.PlayedLvls;
@@ -150,10 +150,21 @@ public class DDAAgent : Agent
         }
     }
 
-    public override void Heuristic(in ActionBuffers actionsOut)
-    {
-        game.CurrLvl = actionsOut.DiscreteActions[0];
-        patient.PlayGame(game);
-        currDDAStrat.Add(game.CurrLvl);
-    }
+    // public override void Heuristic(in ActionBuffers actionsOut)
+    // {
+    //     // game.CurrLvl = actionsOut.DiscreteActions[0];
+    //     // patient.PlayGame(game);
+    //     // currDDAStrat.Add(game.CurrLvl);
+    //
+    //     currDDAStrat = new List<int> { 0, 2, 1, 1, 1 };
+    //     foreach (var mesh2 in freqHeatmapCells)
+    //     {
+    //         mesh2.color = new Color(1.0f, 1.0f, 1.0f,1.0f);
+    //     }
+    //     // for (int i=1; i<currDDAStrat.Count; i++)
+    //     // {
+    //     //     Image mesh = freqHeatmapCells[numCellsPerDim * currDDAStrat[i] + currDDAStrat[i-1]];
+    //     //     mesh.color = new Color(1.0f, 0.0f, 0.0f,1.0f);
+    //     // }
+    // }
 }
