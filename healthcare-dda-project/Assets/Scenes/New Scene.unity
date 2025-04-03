@@ -281,7 +281,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DDAgentPrefab: {fileID: 8089703006054851982, guid: cf5e859ff7bbb5f39821be7420b5ab78, type: 3}
   numAgents: 4
-  gameId: 0
+  gameCond: 0
 --- !u!1 &267729333
 GameObject:
   m_ObjectHideFlags: 0
@@ -1300,7 +1300,7 @@ RectTransform:
   m_GameObject: {fileID: 1900526962}
   m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 3.376925}
-  m_LocalScale: {x: 0.96, y: 0.96, z: 0.96}
+  m_LocalScale: {x: 0.98, y: 0.98, z: 0.98}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 439509415}
