@@ -281,7 +281,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DDAgentPrefab: {fileID: 8089703006054851982, guid: cf5e859ff7bbb5f39821be7420b5ab78, type: 3}
   numAgents: 4
-  gameCond: 0
+  gameCond: 3
 --- !u!1 &267729333
 GameObject:
   m_ObjectHideFlags: 0
