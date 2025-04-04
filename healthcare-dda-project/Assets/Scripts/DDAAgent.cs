@@ -32,6 +32,8 @@ public class DDAAgent : Agent
     
     private int numCellsPerDim;
 
+    private int initialLvl;
+
     
     public override void Initialize()
     {
@@ -43,6 +45,8 @@ public class DDAAgent : Agent
 
         game = new GameWrapper(gameUI, Config);
         patient = new PatientWrapper(Config);
+
+        initialLvl = 0;
 
         numCellsPerDim = game.NumLvls + 1;
         if (initUI)
@@ -69,8 +73,8 @@ public class DDAAgent : Agent
                     .GetComponent<Image>();
                 freqHeatmapCells.Add(cell);
                 if(i==0) //the material affects all cells
-                    cell.material.color = new Color(1.0f, 1.0f, 1.0f);
-                cell.color = new Color(1.0f, 1.0f, 1.0f);
+                    cell.material.color = new Color(1.0f, 1.0f, 1.0f,1.0f);
+                cell.color = new Color(1.0f, 1.0f, 1.0f,1.0f);
             }
             // freqHeatmapCells[0*4+0].color = new Color(0.0f,1.0f,1.0f);
             // freqHeatmapCells[0*4+3].color = new Color(0.0f,0.0f,1.0f);
@@ -93,21 +97,23 @@ public class DDAAgent : Agent
 
     private void UpdateFreqHeatmapCells()
     {
-        string currDDAStratText = "[";
+        string currDDAStratText = "["+ currDDAStrat[0]+"->";
         //update heatmap
         for (int i=1; i<currDDAStrat.Count; i++)
         {
             Image mesh = freqHeatmapCells[numCellsPerDim * currDDAStrat[i] + currDDAStrat[i-1]];
-            mesh.color -= new Color(0.0f, 0.003f, 0.003f,0.0f);
+            mesh.color -= mesh.color.g < 0.0f? Color.clear : new Color(0.0f, 0.003f, 0.003f,0.0f);
 
             currDDAStratText += (i<currDDAStrat.Count - 1)? currDDAStrat[i]+"->": currDDAStrat[i];
+
+            for (int j = 0; j < game.NumLvls + 1; j++)
+            {
+                Image mesh2 = freqHeatmapCells[numCellsPerDim * j + currDDAStrat[i-1]];
+                mesh2.color += mesh2.color.g > 1.0f? Color.clear : new Color(0.0f, 0.001f, 0.001f,0.0f);
+            }
         }
         currDDAStratText += ']';
-
-        foreach (var mesh2 in freqHeatmapCells)
-        {
-            mesh2.color += new Color(0.0f, 0.001f, 0.001f,0.0f);
-        }
+        
         Debug.Log(currDDAStratText);
     }
     
@@ -116,16 +122,18 @@ public class DDAAgent : Agent
         if (patient.PlayedLvls > 0) //force start at state 0
             game.CurrLvl = actionBuffers.DiscreteActions[0];
         else
-            game.CurrLvl = 0;
+            game.CurrLvl = initialLvl;
 
         patient.PlayGame(game);
         currDDAStrat.Add(game.CurrLvl);
-        if (patient.PlayedLvls >= Config.NumEpisodeLvls + 1)
+        if (patient.PlayedLvls >= Config.NumEpisodeLvls)
         {
             UpdateFreqHeatmapCells();
             // float newPInc = (patient.Condition - patient.PrevCondition)/ patient.PlayedLvls;
             float newPInc = patient.Condition/ patient.PlayedLvls;
             SetReward(newPInc);
+        
+            initialLvl = (initialLvl > game.NumLvls - 1) ? 0 : initialLvl + 1;
             EndEpisode();
         }
         
@@ -138,7 +146,7 @@ public class DDAAgent : Agent
         // patient.PrevCondition = patient.Condition;
         patient.PlayedLvls = 0;
         game = new GameWrapper(gameUI, Config);
-
+        
         if (!initUI)
         {
             freqHeatmapCells = new List<Image>(freqHeatmap.GetComponentsInChildren<Image>());
