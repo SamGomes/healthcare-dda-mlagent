@@ -10,6 +10,8 @@ namespace SimEntities
 
     public class SimConfig
     {
+        public string GameCond { get; set; }
+        
         public int NumEpisodeLvls { get; set; }
         public int NumGameLvls { get; set; }
         public List<string> NameGameLvls { get; }
@@ -21,13 +23,16 @@ namespace SimEntities
         
         
         
-        public SimConfig(int numEpisodeLvls, 
+        public SimConfig(
+            string gameCond,
+            int numEpisodeLvls, 
             int numGameLvls, 
             List<string> nameGameLvls, 
             string transitionCSVPath, 
             Func<int,List<(int,int)>,int,int,int,float> rewardFunc,
             int meanFlareDuration)
         {
+            GameCond = gameCond;
             NumEpisodeLvls = numEpisodeLvls;
             NumGameLvls = numGameLvls;
             NameGameLvls = nameGameLvls;

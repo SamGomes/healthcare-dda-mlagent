@@ -238,7 +238,9 @@ public class AgentManager : MonoBehaviour
         switch (gameCond)
         {
             case GameCond.MrBlueSky_BaseCalcs:
-                Config = new SimConfig(4,
+                Config = new SimConfig(
+                    gameCond.ToString(),
+                    4,
                     3,
                     new List<string>() { "A", "B", "C" },
                     "ExpData/processed_data_mrbluesky_bytransition",
@@ -247,7 +249,9 @@ public class AgentManager : MonoBehaviour
                 break;
                 
             case GameCond.MrBlueSky_WithFlares:
-                Config = new SimConfig(4,
+                Config = new SimConfig(
+                    gameCond.ToString(),
+                    4,
                     3,
                     new List<string>() { "A", "B", "C" },
                     "ExpData/processed_data_mrbluesky_bytransition",
@@ -255,7 +259,9 @@ public class AgentManager : MonoBehaviour
                     84);
                 break;
             case GameCond.TheKite_BaseCalcs:
-                Config = new SimConfig(4,
+                Config = new SimConfig(
+                    gameCond.ToString(),
+                    4,
                     4,
                     new List<string>() { "A", "B", "C", "D" },
                     "ExpData/processed_data_thekite_bytransition",
@@ -264,7 +270,9 @@ public class AgentManager : MonoBehaviour
                 break;
                 
             case GameCond.TheKite_WithFlares:
-                Config = new SimConfig(4,
+                Config = new SimConfig(
+                    gameCond.ToString(),
+                    4,
                     4,
                     new List<string>() { "A", "B", "C", "D" },
                     "ExpData/processed_data_thekite_bytransition",
@@ -273,7 +281,9 @@ public class AgentManager : MonoBehaviour
                 break;
             
             case GameCond.test:
-                Config = new SimConfig(4,
+                Config = new SimConfig(
+                    gameCond.ToString(),
+                    4,
                     4,
                     new List<string>() { "A", "B", "C", "D" },
                     "ExpData/processed_data_thekite_bytransition",

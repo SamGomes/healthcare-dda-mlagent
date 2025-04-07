@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using SimEntities;
 using TMPro;
 using UnityEngine;
@@ -12,8 +14,8 @@ using UnityEngine.UI;
 
 public class DDAAgent : Agent
 {
-    private GameWrapper game;
-    private PatientWrapper patient;
+    private GameWrapper m_Game;
+    private PatientWrapper m_Patient;
 
     public bool initUI;
     public SimConfig Config;
@@ -22,18 +24,18 @@ public class DDAAgent : Agent
     
     public GameObject freqHeatmap;
     public GameObject freqHeatmapSquarePrefab;
-    private List<Image> freqHeatmapCells;
+    private List<Image> m_FreqHeatmapCells;
     public GameObject freqHeatmapAxisMarksX;
     public GameObject freqHeatmapAxisMarksY;
     public GameObject freqHeatmapAxisMarkPrefab;
     
-    private List<int> currDDAStrat;
-    private float pInc;
+    private List<int> m_CurrDDAStrat;
+    private List<string> m_CurrDDATjs;
+    private float m_PInc;
     
-    private int numCellsPerDim;
+    private int m_NumCellsPerDim;
 
-    private int initialLvl;
-
+    private int m_InitialLvl;
     
     public override void Initialize()
     {
@@ -43,25 +45,25 @@ public class DDAAgent : Agent
         Config = GameObject.Find("AgentManager").GetComponent<AgentManager>().Config;
         initUI = GameObject.Find("Agents").transform.childCount == 1;
 
-        game = new GameWrapper(gameUI, Config);
-        patient = new PatientWrapper(Config);
+        m_Game = new GameWrapper(gameUI, Config);
+        m_Patient = new PatientWrapper(Config);
 
-        initialLvl = 0;
+        m_InitialLvl = 0;
 
-        numCellsPerDim = game.NumLvls + 1;
+        m_NumCellsPerDim = m_Game.NumLvls + 1;
         if (initUI)
         {
-            freqHeatmapCells = new List<Image>();
+            m_FreqHeatmapCells = new List<Image>();
             float freqHeatmapWidth = freqHeatmap.GetComponent<RectTransform>().sizeDelta.x;
-            float cellWidth = freqHeatmapWidth / numCellsPerDim;
+            float cellWidth = freqHeatmapWidth / m_NumCellsPerDim;
             freqHeatmap.GetComponent<GridLayoutGroup>().cellSize= new Vector2(cellWidth*0.9f,cellWidth*0.9f);
 
             
             List<string> axisLabels = Config.NameGameLvls;
             axisLabels.Insert(0, "_");
-            for (int i = 0; i < (numCellsPerDim * numCellsPerDim); i++)
+            for (int i = 0; i < (m_NumCellsPerDim * m_NumCellsPerDim); i++)
             {
-                if (i < numCellsPerDim) //works because it is symmetrical
+                if (i < m_NumCellsPerDim) //works because it is symmetrical
                 {
                     Instantiate(freqHeatmapAxisMarkPrefab, freqHeatmapAxisMarksX.transform).GetComponent<TMP_Text>()
                         .text = axisLabels[i];
@@ -71,7 +73,7 @@ public class DDAAgent : Agent
 
                 Image cell = Instantiate(freqHeatmapSquarePrefab, freqHeatmap.transform)
                     .GetComponent<Image>();
-                freqHeatmapCells.Add(cell);
+                m_FreqHeatmapCells.Add(cell);
                 if(i==0) //the material affects all cells
                     cell.material.color = new Color(1.0f, 1.0f, 1.0f,1.0f);
                 cell.color = new Color(1.0f, 1.0f, 1.0f,1.0f);
@@ -86,70 +88,108 @@ public class DDAAgent : Agent
         //     freqHeatmapCells = new List<Image>(freqHeatmap.GetComponentsInChildren<Image>());
         // }
 
-        currDDAStrat = new List<int>();
+        m_CurrDDAStrat = new List<int>();
+        m_CurrDDATjs = new List<string>();
+        for (int i = 0; i < m_Game.NumLvls + 1; i++)
+        {
+            m_CurrDDATjs.Add("");
+        }
     }
 
     public override void CollectObservations(VectorSensor sensor)
     {
-        sensor.AddObservation(game.PrevLvl);
-        sensor.AddObservation(game.CurrLvl);
+        sensor.AddObservation(m_Game.PrevLvl);
+        sensor.AddObservation(m_Game.CurrLvl);
     }
 
     private void UpdateFreqHeatmapCells()
     {
-        string currDDAStratText = "["+ currDDAStrat[0]+"->";
+        m_CurrDDATjs[m_InitialLvl] = "["+ m_CurrDDAStrat[0]+"->";
         //update heatmap
-        for (int i=1; i<currDDAStrat.Count; i++)
+        for (int i=1; i<m_CurrDDAStrat.Count; i++)
         {
-            Image mesh = freqHeatmapCells[numCellsPerDim * currDDAStrat[i] + currDDAStrat[i-1]];
+            Image mesh = m_FreqHeatmapCells[m_NumCellsPerDim * m_CurrDDAStrat[i] + m_CurrDDAStrat[i-1]];
             mesh.color -= mesh.color.g < 0.0f? Color.clear : new Color(0.0f, 0.003f, 0.003f,0.0f);
 
-            currDDAStratText += (i<currDDAStrat.Count - 1)? currDDAStrat[i]+"->": currDDAStrat[i];
+            m_CurrDDATjs[m_InitialLvl] += (i<m_CurrDDAStrat.Count - 1)? m_CurrDDAStrat[i]+"->": m_CurrDDAStrat[i];
 
-            for (int j = 0; j < game.NumLvls + 1; j++)
+            for (int j = 0; j < m_Game.NumLvls + 1; j++)
             {
-                Image mesh2 = freqHeatmapCells[numCellsPerDim * j + currDDAStrat[i-1]];
+                Image mesh2 = m_FreqHeatmapCells[m_NumCellsPerDim * j + m_CurrDDAStrat[i-1]];
                 mesh2.color += mesh2.color.g > 1.0f? Color.clear : new Color(0.0f, 0.001f, 0.001f,0.0f);
             }
         }
-        currDDAStratText += ']';
-        
-        Debug.Log(currDDAStratText);
+        m_CurrDDATjs[m_InitialLvl] += ']';
     }
     
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
-        if (patient.PlayedLvls > 0) //force start at state 0
-            game.CurrLvl = actionBuffers.DiscreteActions[0];
+        if (m_Patient.PlayedLvls > 0) //force start at state 0
+            m_Game.CurrLvl = actionBuffers.DiscreteActions[0];
         else
-            game.CurrLvl = initialLvl;
+            m_Game.CurrLvl = m_InitialLvl;
 
-        patient.PlayGame(game);
-        currDDAStrat.Add(game.CurrLvl);
-        if (patient.PlayedLvls >= Config.NumEpisodeLvls)
+        m_Patient.PlayGame(m_Game);
+        m_CurrDDAStrat.Add(m_Game.CurrLvl);
+        if (m_Patient.PlayedLvls >= Config.NumEpisodeLvls)
         {
             UpdateFreqHeatmapCells();
             // float newPInc = (patient.Condition - patient.PrevCondition)/ patient.PlayedLvls;
-            float newPInc = patient.Condition/ patient.PlayedLvls;
+            float newPInc = m_Patient.Condition/ m_Patient.PlayedLvls;
             SetReward(newPInc);
         
-            initialLvl = (initialLvl > game.NumLvls - 1) ? 0 : initialLvl + 1;
+            m_InitialLvl = (m_InitialLvl > m_Game.NumLvls - 1) ? 0 : m_InitialLvl + 1;
             EndEpisode();
         }
         
     }
 
+    private void SaveCurrentConvState()
+    {
+        string folderPath = "Assets/VisualResults/Screenshots/"; // the path of your project folder
+
+        if (!Directory.Exists(folderPath)) // if this path does not exist yet
+            Directory.CreateDirectory(folderPath);  // it will get created
+    
+        var screenshotName =
+            "Screenshot_" +
+            Config.GameCond + // puts the current env setting into the screenshot name
+            ".png";
+        ScreenCapture.CaptureScreenshot(Path.Combine(folderPath, screenshotName),2); // takes the sceenshot, the "2" is for the scaled resolution, you can put this to 600 but it will take really long to scale the image up
+        
+        folderPath = "Assets/VisualResults/ConvTrajectories/"; // the path of your project folder
+
+        if (!Directory.Exists(folderPath)) // if this path does not exist yet
+            Directory.CreateDirectory(folderPath); 
+        var stratName =
+            "Trajectories_" +
+            Config.GameCond +
+            ".txt";
+        StreamWriter writer = new StreamWriter(Path.Combine(folderPath, stratName), false);
+        
+        for (int i = 0; i < m_Game.NumLvls; i++)
+        {
+            writer.WriteLine(m_CurrDDATjs[i]);
+        }
+        writer.Close();
+        
+        Debug.Log(folderPath + screenshotName); // You get instant feedback in the console
+    }
+    
     public override void OnEpisodeBegin()
     {
-        currDDAStrat.Clear();
-        patient.InitRun();
+        if(CompletedEpisodes == 3100) 
+            SaveCurrentConvState();
+        
+        m_CurrDDAStrat.Clear();
+        m_Patient.InitRun();
         // patient.PrevCondition = patient.Condition;
-        patient.PlayedLvls = 0;
-        game = new GameWrapper(gameUI, Config);
+        m_Patient.PlayedLvls = 0;
+        m_Game = new GameWrapper(gameUI, Config);
         
         if (!initUI)
         {
-            freqHeatmapCells = new List<Image>(freqHeatmap.GetComponentsInChildren<Image>());
+            m_FreqHeatmapCells = new List<Image>(freqHeatmap.GetComponentsInChildren<Image>());
             // freqHeatmapCells[0*4+0].color = new Color(0.0f,1.0f,1.0f);
             // freqHeatmapCells[0*4+3].color = new Color(0.0f,0.0f,1.0f);
             // freqHeatmapCells[3*4+0].color = new Color(1.0f,0.0f,0.0f);
@@ -175,4 +215,5 @@ public class DDAAgent : Agent
     //     //     mesh.color = new Color(1.0f, 0.0f, 0.0f,1.0f);
     //     // }
     // }
+    
 }

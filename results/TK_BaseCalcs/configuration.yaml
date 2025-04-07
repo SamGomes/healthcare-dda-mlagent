@@ -5,7 +5,7 @@ behaviors:
     hyperparameters:
       batch_size: 32
       buffer_size: 256
-      learning_rate: 0.0002
+      learning_rate: 0.0005
       beta: 0.01
       epsilon: 0.4
       lambd: 0.95
@@ -38,7 +38,7 @@ behaviors:
     init_path: null
     keep_checkpoints: 5
     even_checkpoints: false
-    max_steps: 30000
+    max_steps: 50000
     time_horizon: 30
     summary_freq: 1000
     threaded: false
