@@ -10,6 +10,8 @@ namespace SimEntities
 
     public class SimConfig
     {
+        public string AlgName { get; set; }
+        
         public string GameCond { get; set; }
         
         public int NumEpisodeLvls { get; set; }
@@ -24,6 +26,7 @@ namespace SimEntities
         
         
         public SimConfig(
+            string algName,
             string gameCond,
             int numEpisodeLvls, 
             int numGameLvls, 
@@ -32,6 +35,7 @@ namespace SimEntities
             Func<int,List<(int,int)>,int,int,int,float> rewardFunc,
             int meanFlareDuration)
         {
+            AlgName = algName;
             GameCond = gameCond;
             NumEpisodeLvls = numEpisodeLvls;
             NumGameLvls = numGameLvls;
@@ -49,6 +53,8 @@ namespace SimEntities
         public int PlayedLvls { get; set; }
         public float Condition { get; private set; }
 
+        public float PrevCondition { get; private set; }
+        
         public List<(int,int)> Flares;
         
         
@@ -104,9 +110,11 @@ namespace SimEntities
             }
             
             Condition = 0.0f;
+            PrevCondition = 0.0f;
         }
         public void PlayGame(GameWrapper game)
         {
+            PrevCondition = Condition;
             Condition += m_Config.RewardFunc(PlayedLvls,Flares,game.PrevLvl,game.CurrLvl,game.NumLvls);
             PlayedLvls++;
         }

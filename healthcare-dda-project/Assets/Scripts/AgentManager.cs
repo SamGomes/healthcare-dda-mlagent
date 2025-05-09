@@ -22,7 +22,8 @@ public class AgentManager : MonoBehaviour
         TheKite_WithFlares = 3,
         test = 4
     }
-    public GameCond gameCond; 
+    public GameCond gameCond;
+    public string algName;
     
     private float NormalizeFromCSV(int lvlTrIndex, string valueCSVAttr)
     {
@@ -239,6 +240,7 @@ public class AgentManager : MonoBehaviour
         {
             case GameCond.MrBlueSky_BaseCalcs:
                 Config = new SimConfig(
+                    algName,
                     gameCond.ToString(),
                     4,
                     3,
@@ -250,6 +252,7 @@ public class AgentManager : MonoBehaviour
                 
             case GameCond.MrBlueSky_WithFlares:
                 Config = new SimConfig(
+                    algName,
                     gameCond.ToString(),
                     4,
                     3,
@@ -260,6 +263,7 @@ public class AgentManager : MonoBehaviour
                 break;
             case GameCond.TheKite_BaseCalcs:
                 Config = new SimConfig(
+                    algName,
                     gameCond.ToString(),
                     4,
                     4,
@@ -271,6 +275,7 @@ public class AgentManager : MonoBehaviour
                 
             case GameCond.TheKite_WithFlares:
                 Config = new SimConfig(
+                    algName,
                     gameCond.ToString(),
                     4,
                     4,
@@ -282,6 +287,7 @@ public class AgentManager : MonoBehaviour
             
             case GameCond.test:
                 Config = new SimConfig(
+                    algName,
                     gameCond.ToString(),
                     4,
                     4,

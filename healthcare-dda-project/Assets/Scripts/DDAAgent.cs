@@ -1,5 +1,3 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using SimEntities;
@@ -7,9 +5,9 @@ using TMPro;
 using UnityEngine;
 using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
+using Unity.MLAgents.Policies;
 using Unity.MLAgents.Sensors;
 using UnityEngine.UI;
-
 
 
 public class DDAAgent : Agent
@@ -51,6 +49,7 @@ public class DDAAgent : Agent
         m_InitialLvl = 0;
 
         m_NumCellsPerDim = m_Game.NumLvls + 1;
+        
         if (initUI)
         {
             m_FreqHeatmapCells = new List<Image>();
@@ -131,12 +130,18 @@ public class DDAAgent : Agent
 
         m_Patient.PlayGame(m_Game);
         m_CurrDDAStrat.Add(m_Game.CurrLvl);
+        
+        // set incentive reward (dense)
+        float newPInc = (m_Patient.Condition - m_Patient.PrevCondition);
+        SetReward(newPInc);
+        
         if (m_Patient.PlayedLvls >= Config.NumEpisodeLvls)
         {
             UpdateFreqHeatmapCells();
-            // float newPInc = (patient.Condition - patient.PrevCondition)/ patient.PlayedLvls;
-            float newPInc = m_Patient.Condition/ m_Patient.PlayedLvls;
-            SetReward(newPInc);
+            
+            // if using reward at end of episode (sparse)
+            // float newPInc = m_Patient.Condition/ m_Patient.PlayedLvls;
+            // SetReward(newPInc);
         
             m_InitialLvl = (m_InitialLvl > m_Game.NumLvls - 1) ? 0 : m_InitialLvl + 1;
             EndEpisode();
@@ -146,7 +151,7 @@ public class DDAAgent : Agent
 
     private void SaveCurrentConvState()
     {
-        string folderPath = "Assets/VisualResults/Screenshots/"; // the path of your project folder
+        string folderPath = "Assets/VisualResults/Screenshots/"+Config.AlgName+"/"; // the path of your project folder
 
         if (!Directory.Exists(folderPath)) // if this path does not exist yet
             Directory.CreateDirectory(folderPath);  // it will get created
@@ -157,7 +162,7 @@ public class DDAAgent : Agent
             ".png";
         ScreenCapture.CaptureScreenshot(Path.Combine(folderPath, screenshotName),2); // takes the sceenshot, the "2" is for the scaled resolution, you can put this to 600 but it will take really long to scale the image up
         
-        folderPath = "Assets/VisualResults/ConvTrajectories/"; // the path of your project folder
+        folderPath = "Assets/VisualResults/ConvTrajectories/"+Config.AlgName+"/"; // the path of your project folder
 
         if (!Directory.Exists(folderPath)) // if this path does not exist yet
             Directory.CreateDirectory(folderPath); 
