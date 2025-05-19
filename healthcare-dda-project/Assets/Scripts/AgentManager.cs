@@ -22,7 +22,14 @@ public class AgentManager : MonoBehaviour
         TheKite_WithFlares = 3,
         test = 4
     }
+    
+    public enum FlareModCond{
+        Normal = 0,
+        Extremes = 1
+    }
+    
     public GameCond gameCond;
+    public FlareModCond flareModCond;
     public string algName;
     
     private float NormalizeFromCSV(int lvlTrIndex, string valueCSVAttr)
@@ -35,14 +42,20 @@ public class AgentManager : MonoBehaviour
 
     private float GetWFlare(int mean, int var, int t)
     {
+        
         if (t > mean + 0.5f*var || t < mean - 0.5f*var)
         {
             return 0.0f;
         }
-
+        
         float tf = t - (mean - 0.5f*var);
         tf /= var;
-        return -0.5f * (float) Math.Cos(2 * Mathf.PI * tf) + 0.5f;
+        if (Config.FlareModCond == FlareModCond.Normal)
+        {
+            return -0.5f * (float)Math.Cos(2 * Mathf.PI * tf) + 0.5f;
+        } //if (Config.FlareModCond == FlareModCond.Extremes)
+        return (tf < 0.1f || tf > 0.9f)? 1.0f : 0.0f;
+        
     }
     
     //for base calculation
@@ -149,10 +162,10 @@ public class AgentManager : MonoBehaviour
         if (currLvl > 0) //transition 00 does not make sense, so do nothing to condition
         {
             
-            // List<float> xtest = new List<float>(10);
-            // for (int i = 0; i < 10; i++) xtest.Add(0);
-            // for (int i = 0; i < 10; i++)
+            // List<float> xtest = new List<float>(100);
+            // for (int i = 0; i < 100; i++)
             // {
+            //     xtest.Add(0);
             //     float maxWFlarel = 0;
             //     foreach (var flare in flares)
             //     {
@@ -242,6 +255,7 @@ public class AgentManager : MonoBehaviour
                 Config = new SimConfig(
                     algName,
                     gameCond.ToString(),
+                    flareModCond,
                     4,
                     3,
                     new List<string>() { "A", "B", "C" },
@@ -254,6 +268,7 @@ public class AgentManager : MonoBehaviour
                 Config = new SimConfig(
                     algName,
                     gameCond.ToString(),
+                    flareModCond,
                     4,
                     3,
                     new List<string>() { "A", "B", "C" },
@@ -265,6 +280,7 @@ public class AgentManager : MonoBehaviour
                 Config = new SimConfig(
                     algName,
                     gameCond.ToString(),
+                    flareModCond,
                     4,
                     4,
                     new List<string>() { "A", "B", "C", "D" },
@@ -277,6 +293,7 @@ public class AgentManager : MonoBehaviour
                 Config = new SimConfig(
                     algName,
                     gameCond.ToString(),
+                    flareModCond,
                     4,
                     4,
                     new List<string>() { "A", "B", "C", "D" },
@@ -289,6 +306,7 @@ public class AgentManager : MonoBehaviour
                 Config = new SimConfig(
                     algName,
                     gameCond.ToString(),
+                    flareModCond,
                     4,
                     4,
                     new List<string>() { "A", "B", "C", "D" },

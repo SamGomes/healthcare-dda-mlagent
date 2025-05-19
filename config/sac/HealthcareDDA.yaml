@@ -3,7 +3,7 @@ behaviors:
     trainer_type: sac
     hyperparameters:
       learning_rate: 0.0005
-      learning_rate_schedule: constant
+      learning_rate_schedule: linear
       batch_size: 32
       buffer_size: 256
       buffer_init_steps: 0

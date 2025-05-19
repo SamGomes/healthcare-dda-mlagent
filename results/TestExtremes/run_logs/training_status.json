@@ -1,0 +1,29 @@
+{
+    "HealthcareDDA": {
+        "checkpoints": [
+            {
+                "steps": 2528,
+                "file_path": "results/TestExtremes/HealthcareDDA/HealthcareDDA-2528.onnx",
+                "reward": 2.2497732520103453,
+                "creation_time": 1747651170.8610544,
+                "auxillary_file_paths": [
+                    "results/TestExtremes/HealthcareDDA/HealthcareDDA-2528.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 2528,
+            "file_path": "results/TestExtremes/HealthcareDDA.onnx",
+            "reward": 2.2497732520103453,
+            "creation_time": 1747651170.8610544,
+            "auxillary_file_paths": [
+                "results/TestExtremes/HealthcareDDA/HealthcareDDA-2528.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.0.0",
+        "torch_version": "2.2.2+cu121"
+    }
+}

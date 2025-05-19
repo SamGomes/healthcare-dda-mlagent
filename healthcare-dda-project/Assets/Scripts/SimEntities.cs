@@ -13,6 +13,7 @@ namespace SimEntities
         public string AlgName { get; set; }
         
         public string GameCond { get; set; }
+        public AgentManager.FlareModCond FlareModCond { get; set; }
         
         public int NumEpisodeLvls { get; set; }
         public int NumGameLvls { get; set; }
@@ -28,6 +29,7 @@ namespace SimEntities
         public SimConfig(
             string algName,
             string gameCond,
+            AgentManager.FlareModCond flareModCond,
             int numEpisodeLvls, 
             int numGameLvls, 
             List<string> nameGameLvls, 
@@ -37,6 +39,7 @@ namespace SimEntities
         {
             AlgName = algName;
             GameCond = gameCond;
+            FlareModCond = flareModCond;
             NumEpisodeLvls = numEpisodeLvls;
             NumGameLvls = numGameLvls;
             NameGameLvls = nameGameLvls;
