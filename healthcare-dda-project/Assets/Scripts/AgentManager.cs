@@ -4,7 +4,7 @@ using SimEntities;
 using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Policies;
 using UnityEngine;
-using Random = UnityEngine.Random;
+using UnityEngine.Serialization;
 
 public class AgentManager : MonoBehaviour
 {
@@ -19,17 +19,24 @@ public class AgentManager : MonoBehaviour
         MrBlueSky_BaseCalcs = 0,
         TheKite_BaseCalcs = 1,
         MrBlueSky_WithFlares = 2,
-        TheKite_WithFlares = 3,
-        test = 4
+        TheKite_WithFlares = 3
     }
     
     public enum FlareModCond{
         Normal = 0,
-        Extremes = 1
+        OnOff = 1
+    }
+    
+    public enum BehaviorCond{
+        AvgValues = 0,
+        HypotheticCase1 = 1,
+        HypotheticCase2 = 2,
+        HypotheticCase3 = 3
     }
     
     public GameCond gameCond;
     public FlareModCond flareModCond;
+    [FormerlySerializedAs("behaviorModCond")] public BehaviorCond behaviorCond;
     public string algName;
     
     private float NormalizeFromCSV(int lvlTrIndex, string valueCSVAttr)
@@ -37,7 +44,8 @@ public class AgentManager : MonoBehaviour
         float value = Convert.ToSingle(Config.Measures[lvlTrIndex][valueCSVAttr]); // cast to float did not work for some reason
         float min = Convert.ToSingle(Config.Measures[lvlTrIndex]["min."+valueCSVAttr]);
         float max = Convert.ToSingle(Config.Measures[lvlTrIndex]["max."+valueCSVAttr]);
-        return (value - min) / (max - min);
+        float maxminusmin = max - min;
+        return maxminusmin == 0? min: (value - min) / maxminusmin;
     }
 
     private float GetWFlare(int mean, int var, int t)
@@ -54,7 +62,7 @@ public class AgentManager : MonoBehaviour
         {
             return -0.5f * (float)Math.Cos(2 * Mathf.PI * tf) + 0.5f;
         } //if (Config.FlareModCond == FlareModCond.Extremes)
-        return (tf < 0.1f || tf > 0.9f)? 1.0f : 0.0f;
+        return (tf < 0.33334f || tf > 0.66667f)? 0.0f : 1.0f;
         
     }
     
@@ -163,10 +171,12 @@ public class AgentManager : MonoBehaviour
         {
             
             // List<float> xtest = new List<float>(100);
+            // List<float> xtest2 = new List<float>(100);
             // for (int i = 0; i < 100; i++)
             // {
             //     xtest.Add(0);
             //     float maxWFlarel = 0;
+            //     Config.FlareModCond = FlareModCond.Normal;
             //     foreach (var flare in flares)
             //     {
             //         float currWFlare = GetWFlare(flare.Item1, flare.Item2, i);
@@ -174,8 +184,20 @@ public class AgentManager : MonoBehaviour
             //     }
             //     
             //     xtest[i] = maxWFlarel;
+            //     
+            //     xtest2.Add(0);
+            //     maxWFlarel = 0;
+            //     Config.FlareModCond = FlareModCond.OnOff;
+            //     foreach (var flare in flares)
+            //     {
+            //         float currWFlare = GetWFlare(flare.Item1, flare.Item2, i);
+            //         maxWFlarel = (maxWFlarel < currWFlare) ? currWFlare : maxWFlarel;
+            //     }
+            //     
+            //     xtest2[i] = maxWFlarel;
             // }
             // Debug.Log(xtest);
+            // Debug.Log(xtest2);
             
             float maxWFlare = 0.0f;
             foreach (var flare in flares)
@@ -249,6 +271,18 @@ public class AgentManager : MonoBehaviour
     void Awake()
     {
 
+        string behaviorCond_MBS =
+            new List<string> {
+                "ExpData/processed_data_mrbluesky_bytransition",
+                "ExpData/HypotheticCases/Case1/processed_data_mrbluesky_bytransition_case1",
+                "ExpData/HypotheticCases/Case3/processed_data_mrbluesky_bytransition_case3"
+            }[(int)behaviorCond];
+        string behaviorCond_TK =
+            new List<string> {
+                "ExpData/processed_data_thekite_bytransition",
+                "ExpData/HypotheticCases/Case1/processed_data_thekite_bytransition_case1",
+                "ExpData/HypotheticCases/Case3/processed_data_thekite_bytransition_case3"
+            }[(int)behaviorCond];
         switch (gameCond)
         {
             case GameCond.MrBlueSky_BaseCalcs:
@@ -259,7 +293,7 @@ public class AgentManager : MonoBehaviour
                     4,
                     3,
                     new List<string>() { "A", "B", "C" },
-                    "ExpData/processed_data_mrbluesky_bytransition",
+                    behaviorCond_MBS,
                     CondIncMBS_baseCalcsOnly,
                     0);
                 break;
@@ -272,7 +306,7 @@ public class AgentManager : MonoBehaviour
                     4,
                     3,
                     new List<string>() { "A", "B", "C" },
-                    "ExpData/processed_data_mrbluesky_bytransition",
+                    behaviorCond_MBS,
                     CondIncMBS,
                     84);
                 break;
@@ -284,7 +318,7 @@ public class AgentManager : MonoBehaviour
                     4,
                     4,
                     new List<string>() { "A", "B", "C", "D" },
-                    "ExpData/processed_data_thekite_bytransition",
+                    behaviorCond_TK,
                     CondIncTheKite_baseCalcsOnly,
                     0);
                 break;
@@ -297,23 +331,23 @@ public class AgentManager : MonoBehaviour
                     4,
                     4,
                     new List<string>() { "A", "B", "C", "D" },
-                    "ExpData/processed_data_thekite_bytransition",
+                    behaviorCond_TK,
                     CondIncTheKite,
                     84);
                 break;
             
-            case GameCond.test:
-                Config = new SimConfig(
-                    algName,
-                    gameCond.ToString(),
-                    flareModCond,
-                    4,
-                    4,
-                    new List<string>() { "A", "B", "C", "D" },
-                    "ExpData/processed_data_thekite_bytransition",
-                    RTest,
-                    0);
-                break;
+            // case GameCond.test:
+            //     Config = new SimConfig(
+            //         algName,
+            //         gameCond.ToString(),
+            //         flareModCond,
+            //         4,
+            //         4,
+            //         new List<string>() { "A", "B", "C", "D" },
+            //         behaviorCond_TK,
+            //         RTest,
+            //         0);
+            //     break;
         }
 
         BehaviorParameters behaviorParameters = DDAgentPrefab.GetComponent<BehaviorParameters>();

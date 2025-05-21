@@ -2,15 +2,15 @@ behaviors:
   HealthcareDDA:
     trainer_type: a2c
     hyperparameters:
-      batch_size: 32
-      buffer_size: 256
+      batch_size: 64
+      buffer_size: 512
       learning_rate: 0.0005
       beta: 0.01
       lambd: 0.95
       num_epoch: 1 
       learning_rate_schedule: linear
     network_settings:
-      normalize: false
+      normalize: true
       hidden_units: 128
       num_layers: 4
       vis_encode_type: simple

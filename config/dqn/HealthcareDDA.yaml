@@ -4,8 +4,8 @@ behaviors:
     hyperparameters:
       learning_rate: 0.0005
       learning_rate_schedule: linear
-      batch_size: 32
-      buffer_size: 256
+      batch_size: 64
+      buffer_size: 512
       tau: 0.005
       steps_per_update: 4.0
       save_replay_buffer: false
@@ -13,7 +13,7 @@ behaviors:
       exploration_initial_eps: 0.8
       exploration_final_eps: 0.05
     network_settings:
-      normalize: false
+      normalize: true
       hidden_units: 128
       num_layers: 4
       vis_encode_type: simple

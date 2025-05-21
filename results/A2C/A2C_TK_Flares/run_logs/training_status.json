@@ -1,0 +1,29 @@
+{
+    "HealthcareDDA": {
+        "checkpoints": [
+            {
+                "steps": 50016,
+                "file_path": "results/A2C_TK_Flares/HealthcareDDA/HealthcareDDA-50016.onnx",
+                "reward": 3.3904337200025716,
+                "creation_time": 1747843339.595194,
+                "auxillary_file_paths": [
+                    "results/A2C_TK_Flares/HealthcareDDA/HealthcareDDA-50016.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 50016,
+            "file_path": "results/A2C_TK_Flares/HealthcareDDA.onnx",
+            "reward": 3.3904337200025716,
+            "creation_time": 1747843339.595194,
+            "auxillary_file_paths": [
+                "results/A2C_TK_Flares/HealthcareDDA/HealthcareDDA-50016.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.0.0",
+        "torch_version": "2.2.2+cu121"
+    }
+}

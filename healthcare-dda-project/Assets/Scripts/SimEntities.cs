@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
-using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 namespace SimEntities
@@ -61,7 +59,6 @@ namespace SimEntities
         public List<(int,int)> Flares;
         
         
-        
         public static float RandomGaussian(float minValue = 0.0f, float maxValue = 1.0f)
         {
             float u, v, S;
@@ -91,7 +88,6 @@ namespace SimEntities
         public void InitRun()
         {
             Flares = new List<(int, int)>();
-
             int numFlares = Random.Range(0, 3);
 
             // List<int> xtest = new List<int>(200);
