@@ -4,7 +4,7 @@ behaviors:
     hyperparameters:
       batch_size: 64
       buffer_size: 512
-      learning_rate: 0.0007
+      learning_rate: 0.00075
       beta: 0.01
       epsilon: 0.3
       lambd: 0.95
