@@ -28,10 +28,12 @@ public class AgentManager : MonoBehaviour
     }
     
     public enum BehaviorCond{
-        AvgValues = 0,
-        HypotheticCase1 = 1,
-        HypotheticCase2 = 2,
-        HypotheticCase3 = 3
+        RealExperiments = 0,
+        StaticProfile = 1,
+        DynamicProfile = 2
+        // ,
+        // DynamicProfile2 = 4,
+        // DynamicTrainingAndTest = 5
     }
     
     public GameCond gameCond;
@@ -127,38 +129,6 @@ public class AgentManager : MonoBehaviour
             
             float rsq = NormalizeFromCSV(lvlTrIndex, "RSQ_thekite_score_delta");
             condInc += CondIncPerMetric(rsq, metricsW[2]);
-        }
-        return condInc;
-    }
-
-    
-    private float RTest(int playedLvls, List<(int,int)> flares, int prevLvl, int currLvl, int numLvls)
-    {
-        float condInc = 0.0f;
-        if (currLvl > 0) //transition 00 does not make sense, so do nothing to condition
-        {
-            
-            //weights given for each metric when calculating Condition Increase
-            float[] metricsW = {0.333f,0.222f,0.111f,0.222f,0.111f}; 
-
-            int lvlTrIndex = (prevLvl * numLvls + currLvl) - 1; //transition 00 does not make sense
-
-            float prd =  (NormalizeFromCSV(lvlTrIndex, "average_displacement1_mrbluesky.second_played_lvl") +
-                          NormalizeFromCSV(lvlTrIndex, "average_displacement2_mrbluesky.second_played_lvl")) / 2.0f;
-            condInc += CondIncPerMetric(prd, metricsW[0]);
-
-            float prt = 1.0f - (NormalizeFromCSV(lvlTrIndex, "averageTimeRight.second_played_lvl") +
-                                NormalizeFromCSV(lvlTrIndex, "averageTimeLeft.second_played_lvl")) / 2.0f;
-            condInc += CondIncPerMetric(prt, metricsW[1]);
-            
-            float sl = 1.0f - NormalizeFromCSV(lvlTrIndex, "stressLevel_delta.second_played_lvl.mrbluesky");
-            condInc += CondIncPerMetric(sl, metricsW[2]);
-
-            float hr = 1.0f - NormalizeFromCSV(lvlTrIndex, "heartRate_delta.second_played_lvl.mrbluesky");
-            condInc += CondIncPerMetric(hr, metricsW[3]);
-            
-            float rsq = NormalizeFromCSV(lvlTrIndex, "RSQ_mrbluesky_score_delta");
-            condInc += CondIncPerMetric(rsq, metricsW[4]);
         }
         return condInc;
     }
@@ -271,17 +241,48 @@ public class AgentManager : MonoBehaviour
     void Awake()
     {
 
-        string behaviorCond_MBS =
-            new List<string> {
-                "ExpData/processed_data_mrbluesky_bytransition",
-                "ExpData/HypotheticCases/Case1/processed_data_mrbluesky_bytransition_case1",
-                "ExpData/HypotheticCases/Case3/processed_data_mrbluesky_bytransition_case3"
+        string[] behaviorCond_MBS =
+            new[]{
+                new[]{"ExpData/processed_data_mrbluesky_bytransition"},
+                new[]{"ExpData/HypotheticCases/Profile1/processed_data_mrbluesky_bytransition_profile1"},
+                // new[]{"ExpData/HypotheticCases/Profile2/processed_data_mrbluesky_bytransition_profile2"},
+                new[]{
+                    "ExpData/processed_data_mrbluesky_bytransition",
+                    "ExpData/HypotheticCases/Profile1/processed_data_mrbluesky_bytransition_profile1"
+                }
+                // ,
+                // new[]{
+                //     "ExpData/processed_data_mrbluesky_bytransition",
+                //     "ExpData/HypotheticCases/Profile2/processed_data_mrbluesky_bytransition_profile2"
+                //     
+                // },
+                // new[]{
+                //     "ExpData/TrainingAndTest/processed_data_mrbluesky_bytransition_training",
+                //     "ExpData/TrainingAndTest/processed_data_mrbluesky_bytransition_test"
+                // }
             }[(int)behaviorCond];
-        string behaviorCond_TK =
-            new List<string> {
-                "ExpData/processed_data_thekite_bytransition",
-                "ExpData/HypotheticCases/Case1/processed_data_thekite_bytransition_case1",
-                "ExpData/HypotheticCases/Case3/processed_data_thekite_bytransition_case3"
+        string[] behaviorCond_TK =
+            new[]{
+                new[]{"ExpData/processed_data_thekite_bytransition"},
+                new[]{"ExpData/HypotheticCases/Profile1/processed_data_thekite_bytransition_profile1"},
+                // new[]{"ExpData/HypotheticCases/Profile2/processed_data_thekite_bytransition_profile2"},
+                new[]
+                {
+                    "ExpData/processed_data_thekite_bytransition",
+                    "ExpData/HypotheticCases/Profile1/processed_data_thekite_bytransition_profile1"
+                }
+                // ,
+                // new[]
+                // {
+                //     "ExpData/processed_data_thekite_bytransition",
+                //     "ExpData/HypotheticCases/Profile2/processed_data_thekite_bytransition_profile2"
+                //     
+                // },
+                // new[]{
+                //     "ExpData/TrainingAndTest/processed_data_thekite_bytransition_training",
+                //     "ExpData/TrainingAndTest/processed_data_thekite_bytransition_test"
+                //     
+                // }
             }[(int)behaviorCond];
         switch (gameCond)
         {

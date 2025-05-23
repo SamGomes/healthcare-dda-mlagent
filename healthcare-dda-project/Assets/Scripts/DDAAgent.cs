@@ -182,9 +182,15 @@ public class DDAAgent : Agent
     
     public override void OnEpisodeBegin()
     {
-        if(CompletedEpisodes == 3100) 
+        if (CompletedEpisodes == 1000) //for dynamic behaviors
+        {
+            m_Patient.ChangeBehavior();
+        }
+        if (CompletedEpisodes == 3100) //for dynamic behaviors
+        {
             SaveCurrentConvState();
-        
+        }
+
         m_CurrDDAStrat.Clear();
         m_Patient.InitRun();
         // patient.PrevCondition = patient.Condition;

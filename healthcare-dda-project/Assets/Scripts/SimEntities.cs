@@ -18,6 +18,10 @@ namespace SimEntities
         public List<string> NameGameLvls { get; }
         
         public List<Dictionary<string,object>> Measures;
+        
+        private int m_CsvI; //for changing when in dynamic behaviour mode
+        private string[] m_TransitionCSVPath; //for changing when in dynamic behaviour mode
+        
         public Func<int,List<(int,int)>,int,int,int,float> RewardFunc { get; set; }
 
         public int MeanFlareDuration;
@@ -31,7 +35,7 @@ namespace SimEntities
             int numEpisodeLvls, 
             int numGameLvls, 
             List<string> nameGameLvls, 
-            string transitionCSVPath, 
+            string[] transitionCSVPath, 
             Func<int,List<(int,int)>,int,int,int,float> rewardFunc,
             int meanFlareDuration)
         {
@@ -42,10 +46,20 @@ namespace SimEntities
             NumGameLvls = numGameLvls;
             NameGameLvls = nameGameLvls;
             RewardFunc = rewardFunc;
-            Measures = CSVReader.Read(transitionCSVPath);
+
+            m_TransitionCSVPath = transitionCSVPath;
             
             MeanFlareDuration = meanFlareDuration;
         }
+
+        public void ChangeBehavior(int behaviorI)
+        {
+            Debug.Log("Changing behavior, if dynamic.");
+            string curr_m_TransitionCSVPath = m_TransitionCSVPath[behaviorI % m_TransitionCSVPath.Length];
+            Measures = CSVReader.Read(curr_m_TransitionCSVPath);
+            Debug.Log("Loaded: \""+curr_m_TransitionCSVPath+"\"");
+        }
+        
     }
     public class PatientWrapper
     {
@@ -57,7 +71,8 @@ namespace SimEntities
         public float PrevCondition { get; private set; }
         
         public List<(int,int)> Flares;
-        
+
+        private int m_behaviorI;
         
         public static float RandomGaussian(float minValue = 0.0f, float maxValue = 1.0f)
         {
@@ -84,6 +99,8 @@ namespace SimEntities
         public PatientWrapper(SimConfig config)
         {
             m_Config = config;
+            m_behaviorI = -1;
+            ChangeBehavior();
         }
         public void InitRun()
         {
@@ -114,8 +131,15 @@ namespace SimEntities
         public void PlayGame(GameWrapper game)
         {
             PrevCondition = Condition;
-            Condition += m_Config.RewardFunc(PlayedLvls,Flares,game.PrevLvl,game.CurrLvl,game.NumLvls);
+            float conditionInc = m_Config.RewardFunc(PlayedLvls,Flares,game.PrevLvl,game.CurrLvl,game.NumLvls);
+            Condition += conditionInc;
             PlayedLvls++;
+        }
+
+        public void ChangeBehavior()
+        {
+            m_behaviorI++;
+            m_Config.ChangeBehavior(m_behaviorI);
         }
     }
 

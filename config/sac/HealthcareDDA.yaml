@@ -2,8 +2,8 @@ behaviors:
   HealthcareDDA:
     trainer_type: sac
     hyperparameters:
-      learning_rate: 0.0005
-      learning_rate_schedule: linear
+      learning_rate: 0.0007
+      learning_rate_schedule: constant
       batch_size: 64
       buffer_size: 512
       buffer_init_steps: 0
