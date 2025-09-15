@@ -11,6 +11,8 @@ using UnityEngine.UI;
 
 public class DDAAgent : Agent
 {
+    private bool m_isRandomBaseline;
+    
     private GameWrapper m_Game;
     private PatientWrapper m_Patient;
 
@@ -48,6 +50,8 @@ public class DDAAgent : Agent
         m_InitialLvl = 0;
 
         m_NumCellsPerDim = m_Game.NumLvls + 1;
+
+        m_isRandomBaseline = Config.AlgName == "RANDOM";
         
         if (initUI)
         {
@@ -122,7 +126,9 @@ public class DDAAgent : Agent
     
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
-        if (m_Patient.PlayedLvls > 0) //force start at state 0
+        if(m_isRandomBaseline)
+            m_Game.CurrLvl = Random.Range(0, m_Game.NumLvls+1);
+        else if (m_Patient.PlayedLvls > 0) //force start at state 0
             m_Game.CurrLvl = actionBuffers.DiscreteActions[0];
         else
             m_Game.CurrLvl = m_InitialLvl;

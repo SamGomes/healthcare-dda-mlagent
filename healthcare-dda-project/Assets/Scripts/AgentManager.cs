@@ -12,9 +12,6 @@ public class AgentManager : MonoBehaviour
     public GameObject DDAgentPrefab;
     public int numAgents;
 
-    /// <summary>
-    /// Toggles between Mr. Blue Sky (0) or The Kite (1)
-    /// </summary>
     public enum GameCond{
         MrBlueSky_BaseCalcs = 0,
         TheKite_BaseCalcs = 1,
@@ -31,14 +28,11 @@ public class AgentManager : MonoBehaviour
         RealExperiments = 0,
         StaticProfile = 1,
         DynamicProfile = 2
-        // ,
-        // DynamicProfile2 = 4,
-        // DynamicTrainingAndTest = 5
     }
     
     public GameCond gameCond;
     public FlareModCond flareModCond;
-    [FormerlySerializedAs("behaviorModCond")] public BehaviorCond behaviorCond;
+    public BehaviorCond behaviorCond;
     public string algName;
     
     private float NormalizeFromCSV(int lvlTrIndex, string valueCSVAttr)
@@ -245,44 +239,20 @@ public class AgentManager : MonoBehaviour
             new[]{
                 new[]{"ExpData/processed_data_mrbluesky_bytransition"},
                 new[]{"ExpData/HypotheticCases/Profile1/processed_data_mrbluesky_bytransition_profile1"},
-                // new[]{"ExpData/HypotheticCases/Profile2/processed_data_mrbluesky_bytransition_profile2"},
                 new[]{
                     "ExpData/processed_data_mrbluesky_bytransition",
                     "ExpData/HypotheticCases/Profile1/processed_data_mrbluesky_bytransition_profile1"
                 }
-                // ,
-                // new[]{
-                //     "ExpData/processed_data_mrbluesky_bytransition",
-                //     "ExpData/HypotheticCases/Profile2/processed_data_mrbluesky_bytransition_profile2"
-                //     
-                // },
-                // new[]{
-                //     "ExpData/TrainingAndTest/processed_data_mrbluesky_bytransition_training",
-                //     "ExpData/TrainingAndTest/processed_data_mrbluesky_bytransition_test"
-                // }
             }[(int)behaviorCond];
         string[] behaviorCond_TK =
             new[]{
                 new[]{"ExpData/processed_data_thekite_bytransition"},
                 new[]{"ExpData/HypotheticCases/Profile1/processed_data_thekite_bytransition_profile1"},
-                // new[]{"ExpData/HypotheticCases/Profile2/processed_data_thekite_bytransition_profile2"},
                 new[]
                 {
                     "ExpData/processed_data_thekite_bytransition",
                     "ExpData/HypotheticCases/Profile1/processed_data_thekite_bytransition_profile1"
                 }
-                // ,
-                // new[]
-                // {
-                //     "ExpData/processed_data_thekite_bytransition",
-                //     "ExpData/HypotheticCases/Profile2/processed_data_thekite_bytransition_profile2"
-                //     
-                // },
-                // new[]{
-                //     "ExpData/TrainingAndTest/processed_data_thekite_bytransition_training",
-                //     "ExpData/TrainingAndTest/processed_data_thekite_bytransition_test"
-                //     
-                // }
             }[(int)behaviorCond];
         switch (gameCond)
         {

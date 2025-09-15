@@ -1,0 +1,5 @@
+behaviors:
+  HealthcareDDA:
+    trainer_type: ppo
+    summary_freq: 1000
+    max_steps: 50000

@@ -1,0 +1,47 @@
+{
+    "name": "root",
+    "metadata": {
+        "timer_format_version": "0.1.0",
+        "start_time_seconds": "1757955639",
+        "python_version": "3.10.12 (main, Jan  5 2025, 23:12:11) [GCC 14.1.1 20240522]",
+        "command_line_arguments": "/home/samgomes/Documents/doutoramento/projects/iProlepsis/reps/healthcare-dda-mlagent/python-venv/bin/mlagents-learn config/random/HealthcareDDA.yaml --run-id=Random_MBS_Flares --force",
+        "mlagents_version": "1.0.0",
+        "mlagents_envs_version": "1.1.0",
+        "communication_protocol_version": "1.5.0",
+        "pytorch_version": "2.2.2+cu121",
+        "numpy_version": "1.23.5",
+        "end_time_seconds": "1757955640"
+    },
+    "total": 1.0653906740008097,
+    "count": 1,
+    "self": 0.007198977000371087,
+    "children": {
+        "run_training.setup": {
+            "total": 0.01808678900124505,
+            "count": 1,
+            "self": 0.01808678900124505
+        },
+        "TrainerController.start_learning": {
+            "total": 1.0401049079991935,
+            "count": 1,
+            "self": 0.0004502990013861563,
+            "children": {
+                "TrainerController._reset_env": {
+                    "total": 1.0396387519976997,
+                    "count": 1,
+                    "self": 1.0396387519976997
+                },
+                "trainer_threads": {
+                    "total": 1.5219993656501174e-06,
+                    "count": 1,
+                    "self": 1.5219993656501174e-06
+                },
+                "TrainerController._save_models": {
+                    "total": 1.4335000741994008e-05,
+                    "count": 1,
+                    "self": 1.4335000741994008e-05
+                }
+            }
+        }
+    }
+}
